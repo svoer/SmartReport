@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Politique de Confidentialité - Enovacom SmartReport</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --primary:#0C4A45;
+      --primary-light:#0f5650;
+    }
+    body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f9fafb}
+    .container{max-width:900px;margin:0 auto;padding:2rem}
+    h1{color:var(--primary);font-size:2rem;font-weight:800;margin-bottom:1rem}
+    h2{color:var(--primary);font-size:1.5rem;font-weight:700;margin-top:2rem;margin-bottom:1rem}
+    h3{color:var(--primary-light);font-size:1.2rem;font-weight:600;margin-top:1.5rem;margin-bottom:0.75rem}
+    p,li{line-height:1.7;color:#374151;margin-bottom:0.75rem}
+    a{color:#2563eb;text-decoration:underline}
+    a:hover{color:#1d4ed8}
+    .card{background:white;border-radius:12px;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);margin-bottom:2rem}
+    .highlight{background:#e8f5f4;padding:1rem;border-left:4px solid var(--primary);border-radius:4px;margin:1rem 0}
+    .warning{background:#fef3c7;padding:1rem;border-left:4px solid:#f59e0b;border-radius:4px;margin:1rem 0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="mb-4">
+      <a href="/" class="inline-flex items-center text-primary hover:text-primary-light transition-colors font-semibold">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Retour à l'application
+      </a>
+    </div>
+    <div class="card">
+      <h1>Politique de Confidentialité</h1>
+      <p class="text-gray-600">Dernière mise à jour : 10 octobre 2025</p>
+      
+      <div class="highlight mt-4">
+        <p><strong>Application interne Enovacom</strong></p>
+        <p>Cette politique de confidentialité s'applique à Enovacom SmartReport, une application web interne réservée aux collaborateurs d'Enovacom.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. Responsable du traitement</h2>
+      <p><strong>Enovacom</strong> est le responsable du traitement des données personnelles collectées dans le cadre de l'utilisation d'Enovacom SmartReport.</p>
+      <p><strong>Contact :</strong> <a href="mailto:sebastien.voerman@enovacom.com">sebastien.voerman@enovacom.com</a></p>
+    </div>
+
+    <div class="card">
+      <h2>2. Données collectées</h2>
+      
+      <h3>2.1 Données stockées localement</h3>
+      <p>Enovacom SmartReport utilise le stockage local de votre navigateur (localStorage) pour sauvegarder :</p>
+      <ul class="list-disc pl-6">
+        <li><strong>Clé API Mistral AI</strong> : Votre clé personnelle pour accéder à l'API Mistral</li>
+        <li><strong>URL de base Mistral</strong> : L'URL de l'API Mistral configurée</li>
+        <li><strong>Historique des prompts</strong> : Les 10 derniers prompts que vous avez saisis</li>
+        <li><strong>Préférences de personnalisation</strong> : Thème, couleurs, police, taille de police</li>
+      </ul>
+
+      <div class="highlight">
+        <p><strong>Important :</strong> Toutes ces données sont stockées <strong>uniquement sur votre poste de travail</strong>, dans le localStorage de votre navigateur. Aucune donnée n'est transmise ou stockée sur un serveur central Enovacom.</p>
+      </div>
+
+      <h3>2.2 Données transmises à des tiers</h3>
+      <p>Lorsque vous utilisez la fonctionnalité de génération de diagrammes par IA :</p>
+      <ul class="list-disc pl-6">
+        <li>Vos <strong>prompts</strong> (descriptions de diagrammes) sont envoyés à <strong>Mistral AI</strong> pour traitement</li>
+        <li>Cette transmission se fait directement depuis votre navigateur vers l'API Mistral AI</li>
+        <li>Enovacom n'intercepte ni ne stocke ces prompts sur ses serveurs</li>
+      </ul>
+
+      <div class="warning">
+        <p><strong>⚠️ Attention :</strong> Ne saisissez pas d'informations hautement confidentielles ou sensibles dans vos prompts, car elles seront transmises à Mistral AI pour traitement.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. Finalité du traitement</h2>
+      <p>Les données sont collectées et traitées pour les finalités suivantes :</p>
+      <ul class="list-disc pl-6">
+        <li><strong>Fonctionnement de l'application</strong> : Permettre la génération de diagrammes via l'IA</li>
+        <li><strong>Personnalisation</strong> : Sauvegarder vos préférences d'affichage</li>
+        <li><strong>Amélioration de l'expérience utilisateur</strong> : Historique des prompts pour faciliter la réutilisation</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4. Base légale du traitement</h2>
+      <p>Le traitement de vos données personnelles repose sur :</p>
+      <ul class="list-disc pl-6">
+        <li><strong>L'intérêt légitime</strong> d'Enovacom à fournir un outil de travail efficace à ses collaborateurs</li>
+        <li><strong>Votre consentement</strong> pour l'utilisation de l'API Mistral AI (en configurant votre clé API)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5. Durée de conservation</h2>
+      <ul class="list-disc pl-6">
+        <li><strong>Données localStorage</strong> : Conservées indéfiniment sur votre navigateur jusqu'à ce que vous les supprimiez manuellement</li>
+        <li><strong>Historique des prompts</strong> : Limité aux 10 derniers prompts, les anciens sont automatiquement supprimés</li>
+        <li><strong>Données transmises à Mistral AI</strong> : Consultez la politique de conservation de Mistral AI</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6. Sécurité des données</h2>
+      
+      <h3>Mesures de sécurité mises en œuvre</h3>
+      <ul class="list-disc pl-6">
+        <li><strong>Accès restreint</strong> : L'application est accessible uniquement depuis le réseau interne Enovacom</li>
+        <li><strong>Stockage local</strong> : Les données sensibles (clés API) restent sur votre poste</li>
+        <li><strong>Pas de serveur central</strong> : Aucune base de données centralisée ne stocke vos données</li>
+        <li><strong>HTTPS</strong> : Les communications avec l'API Mistral AI sont chiffrées</li>
+      </ul>
+
+      <h3>Bonnes pratiques recommandées</h3>
+      <ul class="list-disc pl-6">
+        <li>Ne partagez jamais votre clé API Mistral AI</li>
+        <li>Déconnectez-vous de votre session si vous quittez votre poste</li>
+        <li>Effacez régulièrement votre historique de prompts si nécessaire</li>
+        <li>Ne saisissez pas d'informations confidentielles dans les prompts</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7. Vos droits (RGPD)</h2>
+      <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :</p>
+      
+      <h3>7.1 Droit d'accès</h3>
+      <p>Vous pouvez accéder à vos données en consultant le localStorage de votre navigateur (F12 > Application > Local Storage).</p>
+
+      <h3>7.2 Droit de rectification</h3>
+      <p>Vous pouvez modifier vos paramètres et préférences directement dans l'application.</p>
+
+      <h3>7.3 Droit à l'effacement</h3>
+      <p>Vous pouvez supprimer vos données à tout moment :</p>
+      <ul class="list-disc pl-6">
+        <li>Historique des prompts : Cliquez sur le bouton "🗑️ Effacer" dans l'historique</li>
+        <li>Toutes les données : Effacez le localStorage de votre navigateur</li>
+      </ul>
+
+      <h3>7.4 Droit d'opposition</h3>
+      <p>Vous pouvez cesser d'utiliser l'application à tout moment. Vos données locales resteront sur votre navigateur jusqu'à suppression manuelle.</p>
+
+      <h3>7.5 Exercice de vos droits</h3>
+      <p>Pour toute question ou demande concernant vos données personnelles, contactez :</p>
+      <p><strong>Email :</strong> <a href="mailto:sebastien.voerman@enovacom.com">sebastien.voerman@enovacom.com</a></p>
+    </div>
+
+    <div class="card">
+      <h2>8. Transfert de données hors UE</h2>
+      <p>Lorsque vous utilisez l'API Mistral AI, vos prompts peuvent être transférés et traités hors de l'Union Européenne.</p>
+      <p>Mistral AI met en œuvre des garanties appropriées pour protéger vos données. Pour plus d'informations, consultez :</p>
+      <ul class="list-disc pl-6">
+        <li><a href="https://mistral.ai/terms/" target="_blank">Conditions d'utilisation de Mistral AI</a></li>
+        <li><a href="https://mistral.ai/privacy/" target="_blank">Politique de confidentialité de Mistral AI</a></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>9. Cookies et technologies similaires</h2>
+      <p>Enovacom SmartReport n'utilise <strong>aucun cookie</strong>. L'application utilise uniquement le localStorage du navigateur pour sauvegarder vos préférences localement.</p>
+      
+      <h3>localStorage vs Cookies</h3>
+      <ul class="list-disc pl-6">
+        <li>Le localStorage stocke les données uniquement sur votre appareil</li>
+        <li>Aucune donnée n'est envoyée automatiquement au serveur</li>
+        <li>Vous gardez le contrôle total sur vos données</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>10. Modifications de la politique</h2>
+      <p>Cette politique de confidentialité peut être mise à jour pour refléter les changements dans nos pratiques ou pour des raisons légales.</p>
+      <p>La date de dernière mise à jour est indiquée en haut de cette page.</p>
+      <p>Les modifications importantes vous seront communiquées via les canaux internes d'Enovacom.</p>
+    </div>
+
+    <div class="card">
+      <h2>11. Contact</h2>
+      <p>Pour toute question concernant cette politique de confidentialité ou le traitement de vos données personnelles :</p>
+      
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-4">
+        <ul class="list-disc pl-6">
+          <li><strong>Email :</strong> <a href="mailto:sebastien.voerman@enovacom.com">sebastien.voerman@enovacom.com</a></li>
+          <li><strong>Développeur :</strong> Sébastien Voerman</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

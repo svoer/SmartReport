@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentions Légales - Enovacom SmartReport</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --primary:#0C4A45;
+      --primary-light:#0f5650;
+    }
+    body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#f9fafb}
+    .container{max-width:900px;margin:0 auto;padding:2rem}
+    h1{color:var(--primary);font-size:2rem;font-weight:800;margin-bottom:1rem}
+    h2{color:var(--primary);font-size:1.5rem;font-weight:700;margin-top:2rem;margin-bottom:1rem}
+    h3{color:var(--primary-light);font-size:1.2rem;font-weight:600;margin-top:1.5rem;margin-bottom:0.75rem}
+    p,li{line-height:1.7;color:#374151;margin-bottom:0.75rem}
+    a{color:#2563eb;text-decoration:underline}
+    a:hover{color:#1d4ed8}
+    .card{background:white;border-radius:12px;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);margin-bottom:2rem}
+    .highlight{background:#e8f5f4;padding:1rem;border-left:4px solid var(--primary);border-radius:4px;margin:1rem 0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="mb-4">
+      <a href="/" class="inline-flex items-center text-primary hover:text-primary-light transition-colors font-semibold">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Retour à l'application
+      </a>
+    </div>
+    <div class="card">
+      <h1>Mentions Légales</h1>
+      <p class="text-gray-600">Dernière mise à jour : 10 octobre 2025</p>
+      
+      <div class="highlight mt-4">
+        <p><strong>Application interne Enovacom</strong></p>
+        <p>Enovacom SmartReport est une application web interne développée pour un usage exclusif au sein d'Enovacom. Cette application n'est pas accessible au public.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. Éditeur de l'application</h2>
+      <p><strong>Société :</strong> Enovacom</p>
+      <p><strong>Application :</strong> Enovacom SmartReport</p>
+      <p><strong>Type :</strong> Application web interne (Flask)</p>
+      <p><strong>Usage :</strong> Réservé aux collaborateurs Enovacom</p>
+      <p><strong>Contact technique :</strong> <a href="mailto:sebastien.voerman@enovacom.com">sebastien.voerman@enovacom.com</a></p>
+    </div>
+
+    <div class="card">
+      <h2>2. Hébergement</h2>
+      <p><strong>Type d'hébergement :</strong> Infrastructure interne Enovacom</p>
+      <p><strong>Serveur :</strong> Serveur Flask local/interne</p>
+      <p>L'application est hébergée sur l'infrastructure informatique d'Enovacom et n'est accessible que depuis le réseau interne de l'entreprise.</p>
+    </div>
+
+    <div class="card">
+      <h2>3. Propriété intellectuelle</h2>
+      <p>L'ensemble du contenu de ce site (structure, textes, logos, images, éléments graphiques, vidéos, sons, bases de données, logiciels, etc.) est la propriété exclusive d'Enovacom ou de ses partenaires.</p>
+      
+      <p>Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable d'Enovacom.</p>
+
+      <div class="highlight">
+        <p><strong>Enovacom SmartReport</strong> utilise la bibliothèque open-source <strong>Mermaid.js</strong> (Licence MIT) pour le rendu des diagrammes.</p>
+      </div>
+
+      <h3>Technologies utilisées</h3>
+      <ul class="list-disc pl-6">
+        <li><strong>Mermaid.js</strong> - Rendu de diagrammes (Licence MIT)</li>
+        <li><strong>Alpine.js</strong> - Framework JavaScript (Licence MIT)</li>
+        <li><strong>Tailwind CSS</strong> - Framework CSS (Licence MIT)</li>
+        <li><strong>Mistral AI</strong> - Génération de diagrammes par IA</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4. Protection des données personnelles</h2>
+      <p>Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, cette application respecte la confidentialité des données des collaborateurs Enovacom.</p>
+
+      <h3>Données collectées et stockées</h3>
+      <p>Enovacom SmartReport collecte et stocke les données suivantes :</p>
+      <ul class="list-disc pl-6">
+        <li><strong>Clé API Mistral AI</strong> : Stockée localement dans le navigateur de l'utilisateur (localStorage)</li>
+        <li><strong>Historique des prompts</strong> : Les 10 derniers prompts stockés localement dans le navigateur</li>
+        <li><strong>Préférences utilisateur</strong> : Thème, police, couleurs - stockées localement dans le navigateur</li>
+      </ul>
+
+      <div class="highlight">
+        <p><strong>Important :</strong> Toutes les données sont stockées localement dans votre navigateur (localStorage). Aucune donnée n'est stockée sur un serveur central. Les données restent sur votre poste de travail.</p>
+      </div>
+
+      <h3>Utilisation de l'API Mistral AI</h3>
+      <p>Lorsque vous utilisez la fonctionnalité de génération par IA :</p>
+      <ul class="list-disc pl-6">
+        <li>Vos prompts sont envoyés directement à l'API Mistral AI pour traitement</li>
+        <li>Aucune donnée n'est interceptée ou stockée par Enovacom lors de ce transfert</li>
+        <li>Vous utilisez votre propre clé API Mistral AI</li>
+        <li>Consultez la politique de confidentialité de Mistral AI : <a href="https://mistral.ai/terms/" target="_blank">https://mistral.ai/terms/</a></li>
+      </ul>
+
+      <h3>Responsable du traitement</h3>
+      <p>Enovacom est responsable du traitement des données dans le cadre de cette application interne.</p>
+
+      <h3>Exercice de vos droits</h3>
+      <p>En tant que collaborateur Enovacom, pour toute question relative à vos données personnelles, contactez : <a href="mailto:sebastien.voerman@enovacom.com">sebastien.voerman@enovacom.com</a></p>
+    </div>
+
+    <div class="card">
+      <h2>5. Cookies</h2>
+      <p>Ce site utilise le stockage local du navigateur (localStorage) pour sauvegarder vos préférences et paramètres. Aucun cookie de suivi ou de publicité n'est utilisé.</p>
+
+      <h3>Données stockées localement</h3>
+      <ul class="list-disc pl-6">
+        <li>Paramètres API Mistral (base_url, api_key)</li>
+        <li>Historique des prompts (10 derniers)</li>
+        <li>Préférences de personnalisation (thème, couleurs, police)</li>
+      </ul>
+
+      <p>Vous pouvez supprimer ces données à tout moment en effaçant le localStorage de votre navigateur ou en utilisant le bouton "Effacer" dans l'historique.</p>
+    </div>
+
+    <div class="card">
+      <h2>6. Responsabilité et conditions d'utilisation</h2>
+      
+      <h3>Usage interne uniquement</h3>
+      <p>Enovacom SmartReport est un outil interne destiné aux collaborateurs d'Enovacom. Toute utilisation en dehors du cadre professionnel ou toute diffusion externe est interdite.</p>
+
+      <h3>Limitations de responsabilité</h3>
+      <p>Enovacom s'efforce d'assurer le bon fonctionnement de l'application. Toutefois :</p>
+      <ul class="list-disc pl-6">
+        <li>L'application est fournie "en l'état" sans garantie de disponibilité continue</li>
+        <li>Enovacom ne peut être tenu responsable des interruptions de service</li>
+        <li>Les diagrammes générés par l'IA peuvent contenir des erreurs ou des imprécisions</li>
+        <li>L'utilisateur est responsable de la vérification et de la validation des diagrammes produits</li>
+      </ul>
+
+      <div class="highlight">
+        <p><strong>⚠️ Avertissement important :</strong> Les diagrammes générés par l'IA sont fournis à titre indicatif. Il est de votre responsabilité de vérifier leur exactitude, leur cohérence et leur conformité avant toute utilisation professionnelle ou diffusion auprès de clients.</p>
+      </div>
+
+      <h3>Bon usage de l'application</h3>
+      <ul class="list-disc pl-6">
+        <li>Utilisez l'application de manière responsable et professionnelle</li>
+        <li>Ne partagez pas votre clé API Mistral AI avec d'autres collaborateurs</li>
+        <li>Ne générez pas de diagrammes contenant des informations confidentielles sans précaution</li>
+        <li>Respectez les politiques de sécurité informatique d'Enovacom</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7. Liens hypertextes</h2>
+      <p>Le site peut contenir des liens hypertextes vers d'autres sites. Enovacom n'exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu.</p>
+
+      <p>Liens externes présents :</p>
+      <ul class="list-disc pl-6">
+        <li><a href="https://mermaid.js.org" target="_blank">Documentation Mermaid.js</a></li>
+        <li><a href="https://mistral.ai" target="_blank">Mistral AI</a></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>8. Sécurité et confidentialité</h2>
+      
+      <h3>Sécurité de l'application</h3>
+      <p>Enovacom met en œuvre les mesures de sécurité appropriées pour protéger l'application et les données des utilisateurs :</p>
+      <ul class="list-disc pl-6">
+        <li>Accès restreint au réseau interne Enovacom</li>
+        <li>Stockage local des données sensibles (clés API)</li>
+        <li>Pas de transmission de données vers des serveurs tiers (sauf Mistral AI pour la génération)</li>
+      </ul>
+
+      <h3>Confidentialité des diagrammes</h3>
+      <p>Les diagrammes créés avec Enovacom SmartReport peuvent contenir des informations sensibles ou confidentielles. Il est de votre responsabilité de :</p>
+      <ul class="list-disc pl-6">
+        <li>Ne pas inclure d'informations hautement confidentielles dans les prompts envoyés à l'IA</li>
+        <li>Vérifier que les exports de diagrammes sont stockés de manière sécurisée</li>
+        <li>Respecter les politiques de confidentialité d'Enovacom et de ses clients</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>9. Support et contact</h2>
+      <p>Pour toute question, problème technique ou suggestion concernant Enovacom SmartReport :</p>
+      
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-4">
+        <p class="font-semibold mb-2">Contact technique :</p>
+        <ul class="list-disc pl-6">
+          <li><strong>Email :</strong> <a href="mailto:sebastien.voerman@enovacom.com">sebastien.voerman@enovacom.com</a></li>
+          <li><strong>Développeur :</strong> Sébastien Voerman</li>
+        </ul>
+      </div>
+
+      <p class="mt-4">Pour toute question relative à Enovacom :</p>
+      <ul class="list-disc pl-6">
+        <li><strong>Site web :</strong> <a href="https://www.enovacom.com" target="_blank">www.enovacom.com</a></li>
+      </ul>
+    </div>
+
+    <div class="card bg-gray-50">
+      <h2>Historique des versions</h2>
+      <ul class="list-disc pl-6">
+        <li><strong>Version 1.0</strong> - 10 octobre 2025 : Première version de l'application</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ pdf_config.get('title', 'Document') }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: {{ pdf_config.get('theme', {}).get('margins', {}).get('top', 24) }}mm 
+                    {{ pdf_config.get('theme', {}).get('margins', {}).get('right', 18) }}mm 
+                    {{ pdf_config.get('theme', {}).get('margins', {}).get('bottom', 28) }}mm 
+                    {{ pdf_config.get('theme', {}).get('margins', {}).get('left', 18) }}mm;
+            
+            @top-center {
+                content: element(header);
+            }
+            
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: {{ pdf_config.get('theme', {}).get('font', 'Inter') }}, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #1f2937;
+        }
+        
+        #header {
+            position: running(header);
+            padding-bottom: 10mm;
+            border-bottom: 2px solid {{ pdf_config.get('theme', {}).get('primary', '#0C4A45') }};
+            margin-bottom: 5mm;
+        }
+        
+        #header .logo {
+            max-height: 40px;
+            margin-bottom: 5mm;
+        }
+        
+        #header h1 {
+            font-size: 18pt;
+            font-weight: 700;
+            color: {{ pdf_config.get('theme', {}).get('primary', '#0C4A45') }};
+            margin-bottom: 2mm;
+        }
+        
+        #header .subtitle {
+            font-size: 10pt;
+            color: #6b7280;
+        }
+        
+        #footer {
+            position: running(footer);
+            padding-top: 5mm;
+            border-top: 1px solid #e5e7eb;
+            font-size: 9pt;
+            color: #6b7280;
+            text-align: center;
+        }
+        
+        #footer .page-number:after {
+            content: counter(page) " / " counter(pages);
+        }
+        
+        #footer .legal {
+            margin-top: 2mm;
+            font-size: 8pt;
+        }
+        
+        {% if pdf_config.get('watermark') %}
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 72pt;
+            font-weight: 700;
+            color: rgba(220, 38, 38, 0.08);
+            z-index: -1;
+            white-space: nowrap;
+        }
+        {% endif %}
+        
+        h2 {
+            font-size: 16pt;
+            font-weight: 700;
+            color: {{ pdf_config.get('theme', {}).get('primary', '#0C4A45') }};
+            margin-top: 8mm;
+            margin-bottom: 4mm;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            font-size: 13pt;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 6mm;
+            margin-bottom: 3mm;
+            page-break-after: avoid;
+        }
+        
+        p {
+            margin-bottom: 3mm;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-left: 6mm;
+            margin-bottom: 3mm;
+        }
+        
+        li {
+            margin-bottom: 2mm;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 4mm 0;
+        }
+        
+        th, td {
+            padding: 3mm;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            color: {{ pdf_config.get('theme', {}).get('primary', '#0C4A45') }};
+        }
+        
+        .diagram-container {
+            margin: 6mm 0;
+            page-break-inside: avoid;
+        }
+        
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .image-container {
+            margin: 6mm 0;
+            page-break-inside: avoid;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+        }
+        
+        .image-caption {
+            font-size: 9pt;
+            color: #6b7280;
+            margin-top: 2mm;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .section-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    {% if pdf_config.get('watermark') %}
+    <div class="watermark">CONFIDENTIEL</div>
+    {% endif %}
+    
+    <div id="header">
+        {% if pdf_config.get('logo') %}
+        <img src="{{ pdf_config.get('logo') }}" alt="Logo" class="logo">
+        {% endif %}
+        <h1>{{ pdf_config.get('title', 'Document') }}</h1>
+        <div class="subtitle">
+            {% if pdf_config.get('client') %}Client: {{ pdf_config.get('client') }} | {% endif %}
+            {% if pdf_config.get('subtitle') %}{{ pdf_config.get('subtitle') }}{% endif %}
+        </div>
+    </div>
+    
+    <div id="footer">
+        <div class="page-number"></div>
+        {% if pdf_config.get('footer') %}
+        <div>{{ pdf_config.get('footer') }}</div>
+        {% endif %}
+        {% if pdf_config.get('legal') %}
+        <div class="legal">{{ pdf_config.get('legal') }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="content">
+        {% set order = pdf_config.get('order', ['diagram', 'report', 'images']) %}
+        
+        {% for block in order %}
+            {% if block == 'diagram' and diagram.get('include') and diagram.get('svg') %}
+                <div class="diagram-container">
+                    <h2>Diagramme</h2>
+                    {{ diagram.get('svg') | safe }}
+                </div>
+            {% endif %}
+            
+            {% if block == 'report' and report_html %}
+                <div class="report-container">
+                    {{ report_html | safe }}
+                </div>
+            {% endif %}
+            
+            {% if block == 'images' and images %}
+                <div class="section-break"></div>
+                <h2>Images & Annexes</h2>
+                {% for image in images %}
+                    <div class="image-container">
+                        <img src="{{ image.get('dataUrl') }}" alt="{{ image.get('caption', '') }}">
+                        {% if image.get('caption') %}
+                        <div class="image-caption">{{ image.get('caption') }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</body>
+</html>

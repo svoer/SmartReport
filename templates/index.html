@@ -1,0 +1,2759 @@
+<!DOCTYPE html>
+<html lang="fr" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enovacom SmartReport</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+
+  <!-- Libs (en prod: Tailwind via CLI/PostCSS) -->
+  <script src="https://unpkg.com/alpinejs@3.13.0/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.10/dist/typography.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  
+  <!-- Quill.js - Éditeur WYSIWYG -->
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+  
+  <!-- Quill Table Module -->
+  <link href="https://unpkg.com/quill-table@2/dist/quill-table.css" rel="stylesheet">
+  <script src="https://unpkg.com/quill-table@2/dist/quill-table.js"></script>
+  
+  <!-- Marked.js - Conversion Markdown vers HTML (UMD global) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Webfonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@400;600;700&family=Work+Sans:wght@400;600;700&family=Manrope:wght@400;600;700&family=Montserrat:wght@500;700&family=JetBrains+Mono:wght@600;700&display=swap" />
+
+  <style>
+    [x-cloak]{display:none!important;}
+    :root{
+      /* Enovacom (sert aussi quand thème = Enovacom pour l'UI) */
+      --primary:#0C4A45; --primary-light:#0f5650; --primary-dark:#083832;
+      --accent:#22c55e; --accent-light:#4ade80;
+      --surface:#ffffff; --surface-elevated:#fafafa; --surface-border:#e5e7eb;
+      --text:#111827; --text-2:#6b7280; --muted:#9ca3af;
+      --r-sm:10px; --r-md:14px; --r-lg:18px;
+      --shadow-s:0 1px 3px 0 rgba(0,0,0,.08),0 1px 2px 0 rgba(0,0,0,.04);
+      --shadow-m:0 5px 10px rgba(0,0,0,.06);
+      --shadow-l:0 12px 24px rgba(0,0,0,.08);
+    }
+    *{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    body{background:linear-gradient(180deg,#fafafa 0%,#f3f4f6 100%);color:var(--text);-webkit-font-smoothing:antialiased}
+    .modern-header{background:var(--surface);border-bottom:1px solid var(--surface-border);backdrop-filter:blur(10px);box-shadow:var(--shadow-s)}
+    .brand-name{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.9rem;line-height:1;color:var(--primary);text-transform:lowercase;letter-spacing:-.02em}
+    .brand-product{font-weight:600;font-size:1.15rem;line-height:1.1;color:#111827;margin-left:.45rem;margin-bottom:.08rem}
+    .brand-tagline{font-weight:500;font-size:.95rem;line-height:1.1;color:var(--text-2);margin-left:.85rem;padding-left:.85rem;border-left:2px solid var(--surface-border);margin-bottom:.08rem}
+    .brand-subtitle{font-family:'Poppins',sans-serif;font-weight:700;color:var(--primary)}
+
+    .neo-card{background:var(--surface);border:1px solid var(--surface-border);border-radius:var(--r-lg);box-shadow:var(--shadow-s);transition:transform .15s ease}
+    .neo-card:hover{transform:translateY(-1px)}
+    .neo-card-header{padding:1.1rem 1.1rem 0 1.1rem;border-bottom:1px solid var(--surface-border);margin-bottom:1.1rem}
+    .section-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:var(--primary)}
+
+    .neo-input{width:100%;padding:.8rem 1rem;border:1.5px solid var(--surface-border);border-radius:12px;background:var(--surface);font-weight:500}
+    .neo-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(12,74,69,.12);outline:0}
+    .neo-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;background-size:1rem;padding-right:2.5rem}
+
+    .neo-btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 1rem;border-radius:12px;border:1px solid var(--surface-border);background:var(--surface-elevated);cursor:pointer}
+    .neo-btn:hover{background:#fff;box-shadow:var(--shadow-s)}
+    .neo-btn-primary{background:var(--primary);color:#fff;border:none}
+    .neo-btn-primary:hover{background:var(--primary-light);box-shadow:var(--shadow-m)}
+    .neo-btn-icon{width:44px;padding:0}
+    .is-recording{background:rgba(242,101,80,.12);border-color:#f26950}
+
+    .preview-container{background:var(--surface);border:1px solid var(--surface-border);border-radius:14px;min-height:400px;overflow:auto;padding:1rem}
+    #preview svg{max-width:100%!important;height:auto!important}
+
+    .neo-toast{position:fixed;top:1rem;right:1rem;z-index:100;padding:.85rem 1.1rem;border-radius:12px;color:#fff;font-weight:700;box-shadow:var(--shadow-l);transform:translateX(120%);transition:transform .25s ease}
+    .neo-toast.success{background:linear-gradient(135deg,var(--accent),#16a34a)}
+    .neo-toast.error{background:linear-gradient(135deg,#ef4444,#dc2626)}
+    .neo-toast.show{transform:translateX(0)}
+
+    /* Tuiles export (claires, sans sous-titre) */
+    .export-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
+    .export-tile{
+      display:flex;align-items:center;justify-content:center;
+      height:72px;border:1px solid var(--surface-border);border-radius:16px;
+      background:var(--surface-elevated);box-shadow:var(--shadow-s);
+      font-family:'JetBrains Mono',monospace;font-weight:800;letter-spacing:.08em;
+      font-size:1.15rem; text-transform:uppercase;
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+    .export-tile:hover{transform:translateY(-1px);box-shadow:var(--shadow-m);background:#fff}
+
+    @media (max-width:1280px){
+      .container-main{grid-template-columns:1fr}
+      .sidebar{order:2}
+      .main-content{order:1}
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div id="toast" class="neo-toast"></div>
+
+  <!-- Header -->
+  <header class="modern-header sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-end">
+          <span class="brand-name">enovacom</span>
+          <span class="brand-product">SmartReport</span>
+          <span class="brand-tagline">Notez. Validez. Envoyez.</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div x-data="{showDiagramMenu: false}" class="relative">
+            <button @click="showDiagramMenu = !showDiagramMenu" class="neo-btn" title="Choisir un type de diagramme">
+              Démo Diagramme
+            </button>
+            <div x-show="showDiagramMenu" @click.away="showDiagramMenu = false" x-cloak class="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-xl p-2 z-50 min-w-[220px]">
+              <button @click="loadDemoByType('flowchart'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Flowchart</button>
+              <button @click="loadDemoByType('sequence'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Sequence</button>
+              <button @click="loadDemoByType('class'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Class</button>
+              <button @click="loadDemoByType('state'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">State</button>
+              <button @click="loadDemoByType('er'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">ER Diagram</button>
+              <button @click="loadDemoByType('gantt'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Gantt</button>
+              <button @click="loadDemoByType('pie'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Pie Chart</button>
+              <button @click="loadDemoByType('gitgraph'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Git Graph</button>
+              <button @click="loadDemoByType('journey'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Journey</button>
+            </div>
+          </div>
+          <button @click="showSettings = true" class="neo-btn" title="Paramètres API">Paramètres</button>
+          <button @click="showHelp = true" class="neo-btn" title="Aide Mermaid">Aide</button>
+        </div>
+      </div>
+
+      <!-- Choix du modèle -->
+      <div class="flex items-center gap-6 mt-4 pt-4 border-t border-gray-200">
+        <div class="flex items-center gap-3 flex-1">
+          <label class="font-semibold">Modèle</label>
+          <div x-show="loadingModels" class="text-gray-600">Chargement…</div>
+          <select x-show="!loadingModels && models && models.length" x-model="selectedModel" class="neo-input neo-select flex-1 max-w-md" title="Modèle Mistral">
+            <template x-for="(model, index) in models" :key="index">
+              <option :value="model" x-text="model"></option>
+            </template>
+          </select>
+          <div x-show="!loadingModels && (!models || !models.length)" class="text-sm text-red-600">Aucun modèle</div>
+        </div>
+        <!-- Refresh button -->
+        <button x-show="!loadingModels" @click="loadModels()" class="neo-btn neo-btn-icon" title="Recharger les modèles" aria-label="Recharger les modèles">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 2v6h-6" />
+            <path d="M3 22v-6h6" />
+            <path d="M3.5 9a9 9 0 0 1 14.1-3.4L21 8" />
+            <path d="M20.5 15a9 9 0 0 1-14.1 3.4L3 16" />
+          </svg>
+        </button>
+        <!-- Loading spinner while fetching models -->
+        <button x-show="loadingModels" disabled class="neo-btn neo-btn-icon" title="Chargement…" aria-busy="true">
+          <svg class="w-5 h-5 animate-spin text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9" stroke-opacity="0.25" />
+            <path d="M21 12a9 9 0 0 1-9 9" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <div class="container-main space-y-6">
+
+      <!-- Section 1: Compte Rendu (déplacé en premier) -->
+      <section class="neo-card" id="compte-rendu">
+        <div class="neo-card-header">
+          <h2 class="section-title">Compte rendu</h2>
+        </div>
+        <div class="px-4 pb-4 space-y-4">
+          <!-- Template + Métadonnées -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-sm font-semibold mb-1">Template</label>
+              <select x-model="currentProject.report.template" class="neo-input neo-select">
+                <template x-for="tpl in reportTemplates" :key="tpl.id">
+                  <option :value="tpl.id" x-text="tpl.name"></option>
+                </template>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Date réunion</label>
+              <input type="date" x-model="currentProject.report.meta.date" class="neo-input">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Participants</label>
+              <input type="text" x-model="currentProject.report.meta.participants" class="neo-input" placeholder="Nom1, Nom2...">
+            </div>
+          </div>
+          
+          <!-- Notes brutes -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-semibold">Notes brutes</label>
+              <button @click="toggleNoteDictation()" class="neo-btn neo-btn-icon" :class="{'is-recording': isRecordingNotes}" :title="isRecordingNotes ? 'Arrêter la dictée' : 'Dicter les notes'" style="height: 32px; width: 32px;">
+                <span x-show="!isRecordingNotes">🎤</span>
+                <span x-show="isRecordingNotes">⏹️</span>
+              </button>
+            </div>
+            <textarea x-model="currentProject.report.rawNotes" @input="saveProject()" :class="['neo-input resize-vertical h-32', isRecordingNotes ? 'ring-2 ring-rose-500' : '']" :placeholder="(isRecordingNotes ? 'Parlez… la dictée est en cours' : 'Tapez vos notes ici...')"></textarea>
+          </div>
+          
+          <!-- Génération -->
+          <div class="flex gap-2">
+            <button @click="generateReport()" :disabled="isGeneratingReport || !currentProject.report.rawNotes.trim()" class="neo-btn neo-btn-primary flex-1">
+              <span x-show="!isGeneratingReport">Générer le compte rendu</span>
+              <span x-show="isGeneratingReport">Génération...</span>
+            </button>
+            <button @click="currentProject.report.generated = ''" :disabled="!currentProject.report.generated" class="neo-btn">Réinitialiser</button>
+          </div>
+                    <!-- Résultat -->
+            <div x-show="currentProject.report.generated" class="space-y-2">
+              <label class="block text-sm font-semibold">Compte rendu généré (éditable)</label>
+            
+            <!-- Éditeur contenteditable avec toolbar sticky dans le même conteneur scrollable -->
+            <div class="neo-input p-0">
+              <div id="editor-holder" class="max-h-[60vh] overflow-auto">
+                <!-- Toolbar sticky -->
+                <div class="bg-white sticky top-0 z-10 border-b border-gray-200 p-2 flex flex-wrap gap-2">
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('bold')"><b>B</b></button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('italic')"><i>I</i></button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('underline')"><u>U</u></button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('strikeThrough')"><s>S</s></button>
+                  <div class="h-6 w-px bg-gray-300 mx-1"></div>
+                  <button type="button" class="neo-btn" @mousedown.prevent="setHeading(1)">H1</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="setHeading(2)">H2</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="setHeading(3)">H3</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="setHeading(4)">H4</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="setHeading(5)">H5</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="setHeading(6)">H6</button>
+                  <div class="h-6 w-px bg-gray-300 mx-1"></div>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('insertUnorderedList')">• Liste</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('insertOrderedList')">1. Liste</button>
+                  <div class="h-6 w-px bg-gray-300 mx-1"></div>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('justifyLeft')">↤</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('justifyCenter')">↔</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="format('justifyRight')">↦</button>
+                  <div class="h-6 w-px bg-gray-300 mx-1"></div>
+                  <button type="button" class="neo-btn" @mousedown.prevent="undo()">↶ Annuler</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="redo()">↷ Rétablir</button>
+                  <div class="h-6 w-px bg-gray-300 mx-1"></div>
+                  <button type="button" class="neo-btn" @mousedown.prevent="insertTable()">↹ Tableau</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="clearFormatting()">Effacer formatage</button>
+                </div>
+                <!-- Éditeur -->
+                <div 
+                  id="report-editor"
+                  contenteditable="true"
+                  @input="currentProject.report.generated = $event.target.innerHTML; debouncedSave()"
+                  @keydown="onEditorKeydown($event)"
+                  x-init="$el.innerHTML = currentProject.report.generated"
+                  x-effect="if(!document.activeElement || document.activeElement !== $el) { $el.innerHTML = currentProject.report.generated }"
+                  class="min-h-[300px] p-4"
+                  style="white-space: pre-wrap; line-height: 1.6;"
+                ></div>
+              </div>
+            </div>
+
+            <style>
+              #report-editor table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+              #report-editor th { background-color: #0C4A45; color: white; padding: 12px; text-align: left; font-weight: bold; border: 1px solid #0C4A45; }
+              #report-editor td { padding: 10px; border: 1px solid #d1d5db; }
+              #report-editor tr:nth-child(even) { background-color: #f9fafb; }
+              /* Titres */
+              #report-editor h1 { font-size: 1.75em; font-weight: 800; margin-top: 28px; margin-bottom: 14px; color: #0C4A45; }
+              #report-editor h2 { font-size: 1.5em; font-weight: 700; margin-top: 24px; margin-bottom: 12px; color: #0C4A45; }
+              #report-editor h3 { font-size: 1.25em; font-weight: 700; margin-top: 20px; margin-bottom: 10px; color: #0C4A45; }
+              #report-editor h4 { font-size: 1.1em; font-weight: 600; margin-top: 18px; margin-bottom: 8px; color: #0C4A45; }
+              #report-editor h5 { font-size: 1.0em; font-weight: 600; margin-top: 16px; margin-bottom: 6px; color: #0C4A45; }
+              #report-editor h6 { font-size: 0.95em; font-weight: 600; margin-top: 14px; margin-bottom: 6px; color: #0C4A45; }
+              /* Paragraphes et listes */
+              #report-editor p { margin: 12px 0; }
+              #report-editor ul, #report-editor ol { margin: 12px 0; padding-left: 24px; }
+              #report-editor li { margin: 6px 0; }
+              #report-editor strong { font-weight: 700; color: #0C4A45; }
+            </style>
+
+            <div class="flex gap-2 mt-2">
+              <button @click="navigator.clipboard.writeText(document.getElementById('report-editor').innerText); showToast('Copié!', 'success')" class="neo-btn">Copier le texte</button>
+              <button @click="currentProject.report.generated = ''; debouncedSave()" class="neo-btn">Effacer</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Prompt IA - placé sous le Compte Rendu -->
+      <section class="neo-card">
+        <div class="neo-card-header" style="padding: 0.75rem 1rem;"><h2 class="section-title text-base">Générer avec l'IA</h2></div>
+        <div class="px-4 pb-4">
+          <!-- Sélecteur de type de diagramme -->
+          <div class="mb-3">
+            <label class="block text-sm font-semibold mb-1">Type de diagramme</label>
+            <select x-model="selectedDiagramType" @change="updatePromptWithType()" class="neo-input neo-select" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;">
+              <option value="">-- Sélectionnez un type (optionnel) --</option>
+              <option value="flowchart">Flowchart (Organigramme)</option>
+              <option value="sequence">Sequence (Diagramme de séquence)</option>
+              <option value="class">Class (Diagramme de classes)</option>
+              <option value="state">State (Diagramme d'états)</option>
+              <option value="er">ER Diagram (Entité-Relation)</option>
+              <option value="gantt">Gantt (Planning)</option>
+              <option value="pie">Pie Chart (Graphique circulaire)</option>
+              <option value="gitgraph">Git Graph</option>
+              <option value="journey">Journey (Parcours utilisateur)</option>
+            </select>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+            <div class="lg:col-span-10">
+              <textarea x-model="prompt" :class="['neo-input resize-none h-24 mb-0', isRecording ? 'ring-2 ring-rose-500' : '']" style="font-size: 0.9rem; padding: 0.6rem 0.8rem;" :placeholder="(isRecording ? 'Parlez… la dictée est en cours' : 'Décrivez le diagramme que vous voulez créer...')"></textarea>
+            </div>
+            <div class="lg:col-span-2 flex flex-col gap-2">
+              <button @click="generate()" :disabled="loading || !prompt.trim()" class="neo-btn neo-btn-primary flex-1" style="min-height: 44px;" title="Générer le diagramme (Ctrl+Enter)">
+                <span x-show="!loading">Générer</span><span x-show="loading">Génération…</span>
+              </button>
+              <button @click="toggleDictation()" class="neo-btn flex-1" :class="{'is-recording': isRecording}" :title="isRecording ? 'Arrêter la dictée' : 'Dicter'" aria-label="Dictée" style="min-height: 44px;">Dicter</button>
+            </div>
+          </div>
+          
+          <!-- Historique des prompts -->
+          <div x-show="promptHistory.length > 0" class="mt-3 pt-3 border-t border-gray-200">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-gray-600">Historique (10 derniers)</span>
+              <button @click="clearHistory()" class="text-xs text-red-600 hover:text-red-700 font-medium">Effacer</button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="(p, index) in promptHistory" :key="index">
+                <button @click="loadFromHistory(p)" class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded border border-gray-300 transition-colors max-w-xs truncate" :title="p" x-text="p.substring(0, 50) + (p.length > 50 ? '...' : '')"></button>
+              </template>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Diagramme (déplacé en deuxième) -->
+      <!-- Éditeur de code Mermaid -->
+      <section class="neo-card">
+        <div class="neo-card-header" style="padding: 0.75rem 1rem;"><h2 class="section-title text-base">Éditeur de code Mermaid</h2></div>
+        <div class="px-4 pb-4 pt-2">
+          <textarea x-model="mermaidCode" @input="debouncedRender()" class="neo-input font-mono resize-vertical h-32 mb-3" style="font-size: 0.85rem; padding: 0.6rem 0.8rem;" placeholder="Tapez votre code Mermaid ici..."></textarea>
+          <div class="text-xs">
+            <span x-show="lastError" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-red-50 text-red-700 border border-red-200">❌ <span x-text="lastError"></span></span>
+            <span x-show="!lastError && mermaidCode" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">✅ Syntaxe OK</span>
+          </div>
+        </div>
+      </section>
+
+        <!-- Toolbar ligne 1 : Thème + Couleurs -->
+        <section class="bg-white/60 border border-gray-200 rounded-2xl p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+            <!-- Thème -->
+            <div>
+              <label class="font-semibold block mb-1 text-sm">Thème</label>
+              <select x-model="theme" @change="applyTheme()" class="neo-input neo-select" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;">
+                <optgroup label="Professionnels">
+                  <template x-for="t in availableThemes.filter(th => th.category === 'pro')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
+                </optgroup>
+                <optgroup label="Sombres">
+                  <template x-for="t in availableThemes.filter(th => th.category === 'dark')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
+                </optgroup>
+                <optgroup label="Bleus">
+                  <template x-for="t in availableThemes.filter(th => th.category === 'blue')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
+                </optgroup>
+                <optgroup label="Verts">
+                  <template x-for="t in availableThemes.filter(th => th.category === 'green')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
+                </optgroup>
+                <optgroup label="Roses & Rouges">
+                  <template x-for="t in availableThemes.filter(th => th.category === 'pink')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
+                </optgroup>
+                <optgroup label="Violets">
+                  <template x-for="t in availableThemes.filter(th => th.category === 'purple')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
+                </optgroup>
+                <optgroup label="Chauds & Vifs">
+                  <template x-for="t in availableThemes.filter(th => th.category === 'warm')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Couleur Bordure -->
+            <div>
+              <label class="font-semibold block mb-1 text-sm">Bordure</label>
+              <div class="flex items-center gap-2">
+                <input type="color" x-model="borderColor" @input="updateColors()" class="w-10 h-8 border border-gray-300 rounded cursor-pointer" title="Couleur bordure"/>
+                <div x-data="{open:false}" class="relative flex-1">
+                  <button type="button" @click="open=!open" class="neo-input neo-select w-full flex items-center justify-between" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
+                    <span class="inline-flex items-center gap-2">
+                      <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${borderColor}`"></span>
+                      <span x-text="borderColor"></span>
+                    </span>
+                    <svg class="w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5.25 7.5l4.5 4.5 4.5-4.5"/></svg>
+                  </button>
+                  <div x-show="open" @click.away="open=false" x-cloak class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-72 overflow-auto">
+                    <template x-for="group in borderPresets" :key="group.label">
+                      <div class="py-1">
+                        <div class="px-3 py-1 text-xs text-gray-500" x-text="group.label"></div>
+                        <template x-for="item in group.items" :key="item.color">
+                          <button type="button" @click="borderColor=item.color; updateColors(); open=false" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50">
+                            <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${item.color}`"></span>
+                            <span class="text-sm" x-text="item.name"></span>
+                            <span class="ml-auto text-xs text-gray-400" x-text="item.color"></span>
+                          </button>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Couleur Remplissage -->
+            <div>
+              <label class="font-semibold block mb-1 text-sm">Remplissage</label>
+              <div class="flex items-center gap-2">
+                <input type="color" x-model="fillColor" @input="updateColors()" class="w-10 h-8 border border-gray-300 rounded cursor-pointer" title="Couleur remplissage"/>
+                <div x-data="{open:false}" class="relative flex-1">
+                  <button type="button" @click="open=!open" class="neo-input neo-select w-full flex items-center justify-between" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
+                    <span class="inline-flex items-center gap-2">
+                      <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${fillColor}`"></span>
+                      <span x-text="fillColor"></span>
+                    </span>
+                    <svg class="w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5.25 7.5l4.5 4.5 4.5-4.5"/></svg>
+                  </button>
+                  <div x-show="open" @click.away="open=false" x-cloak class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-72 overflow-auto">
+                    <template x-for="group in fillPresets" :key="group.label">
+                      <div class="py-1">
+                        <div class="px-3 py-1 text-xs text-gray-500" x-text="group.label"></div>
+                        <template x-for="item in group.items" :key="item.color">
+                          <button type="button" @click="fillColor=item.color; updateColors(); open=false" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50">
+                            <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${item.color}`"></span>
+                            <span class="text-sm" x-text="item.name"></span>
+                            <span class="ml-auto text-xs text-gray-400" x-text="item.color"></span>
+                          </button>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Couleur Texte -->
+            <div>
+              <label class="font-semibold block mb-1 text-sm">Texte</label>
+              <div class="flex items-center gap-2">
+                <input type="color" x-model="textColor" @input="updateColors()" class="w-10 h-8 border border-gray-300 rounded cursor-pointer" title="Couleur texte"/>
+                <div x-data="{open:false}" class="relative flex-1">
+                  <button type="button" @click="open=!open" class="neo-input neo-select w-full flex items-center justify-between" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
+                    <span class="inline-flex items-center gap-2">
+                      <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${textColor}`"></span>
+                      <span x-text="textColor"></span>
+                    </span>
+                    <svg class="w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5.25 7.5l4.5 4.5 4.5-4.5"/></svg>
+                  </button>
+                  <div x-show="open" @click.away="open=false" x-cloak class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-72 overflow-auto">
+                    <template x-for="group in textPresets" :key="group.label">
+                      <div class="py-1">
+                        <div class="px-3 py-1 text-xs text-gray-500" x-text="group.label"></div>
+                        <template x-for="item in group.items" :key="item.color">
+                          <button type="button" @click="textColor=item.color; updateColors(); open=false" class="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50">
+                            <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${item.color}`"></span>
+                            <span class="text-sm" x-text="item.name"></span>
+                            <span class="ml-auto text-xs text-gray-400" x-text="item.color"></span>
+                          </button>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Toolbar ligne 2 : Police et Taille -->
+        <section class="bg-white/60 border border-gray-200 rounded-2xl p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Police -->
+            <div>
+              <label class="font-semibold block mb-1 text-sm">Police</label>
+              <select x-model="fontFamily" @change="onFontChange()" class="neo-input neo-select font-preview-select" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;">
+                <optgroup label="Sans-serif modernes">
+                  <option value="Inter, sans-serif" style="font-family: Inter, sans-serif;">Inter</option>
+                  <option value="Roboto, sans-serif" style="font-family: Roboto, sans-serif;">Roboto</option>
+                  <option value="'Open Sans', sans-serif" style="font-family: 'Open Sans', sans-serif;">Open Sans</option>
+                  <option value="Lato, sans-serif" style="font-family: Lato, sans-serif;">Lato</option>
+                  <option value="Poppins, sans-serif" style="font-family: Poppins, sans-serif;">Poppins</option>
+                  <option value="Nunito, sans-serif" style="font-family: Nunito, sans-serif;">Nunito</option>
+                  <option value="Raleway, sans-serif" style="font-family: Raleway, sans-serif;">Raleway</option>
+                  <option value="Ubuntu, sans-serif" style="font-family: Ubuntu, sans-serif;">Ubuntu</option>
+                </optgroup>
+                <optgroup label="Design & Style">
+                  <option value="'Work Sans', sans-serif" style="font-family: 'Work Sans', sans-serif;">Work Sans</option>
+                  <option value="Manrope, sans-serif" style="font-family: Manrope, sans-serif;">Manrope</option>
+                  <option value="Montserrat, sans-serif" style="font-family: Montserrat, sans-serif;">Montserrat</option>
+                  <option value="Quicksand, sans-serif" style="font-family: Quicksand, sans-serif;">Quicksand</option>
+                  <option value="Comfortaa, sans-serif" style="font-family: Comfortaa, sans-serif;">Comfortaa</option>
+                  <option value="Bebas Neue, sans-serif" style="font-family: 'Bebas Neue', sans-serif;">Bebas Neue</option>
+                  <option value="Oswald, sans-serif" style="font-family: Oswald, sans-serif;">Oswald</option>
+                  <option value="Righteous, sans-serif" style="font-family: Righteous, sans-serif;">Righteous</option>
+                </optgroup>
+                <optgroup label="Professionnelles Modernes">
+                  <option value="'DM Sans', sans-serif" style="font-family: 'DM Sans', sans-serif;">DM Sans</option>
+                  <option value="'Plus Jakarta Sans', sans-serif" style="font-family: 'Plus Jakarta Sans', sans-serif;">Plus Jakarta Sans</option>
+                  <option value="Sora, sans-serif" style="font-family: Sora, sans-serif;">Sora</option>
+                  <option value="'Space Grotesk', sans-serif" style="font-family: 'Space Grotesk', sans-serif;">Space Grotesk</option>
+                  <option value="Lexend, sans-serif" style="font-family: Lexend, sans-serif;">Lexend</option>
+                  <option value="Outfit, sans-serif" style="font-family: Outfit, sans-serif;">Outfit</option>
+                  <option value="Figtree, sans-serif" style="font-family: Figtree, sans-serif;">Figtree</option>
+                  <option value="Archivo, sans-serif" style="font-family: Archivo, sans-serif;">Archivo</option>
+                  <option value="Barlow, sans-serif" style="font-family: Barlow, sans-serif;">Barlow</option>
+                  <option value="'Exo 2', sans-serif" style="font-family: 'Exo 2', sans-serif;">Exo 2</option>
+                  <option value="Karla, sans-serif" style="font-family: Karla, sans-serif;">Karla</option>
+                  <option value="'Red Hat Display', sans-serif" style="font-family: 'Red Hat Display', sans-serif;">Red Hat Display</option>
+                </optgroup>
+                <optgroup label="Serif (classique)">
+                  <option value="'Playfair Display', serif" style="font-family: 'Playfair Display', serif;">Playfair Display</option>
+                  <option value="Merriweather, serif" style="font-family: Merriweather, serif;">Merriweather</option>
+                </optgroup>
+                <optgroup label="Fantaisie & Fun">
+                  <option value="Pacifico, cursive" style="font-family: Pacifico, cursive;">Pacifico</option>
+                  <option value="Lobster, cursive" style="font-family: Lobster, cursive;">Lobster</option>
+                  <option value="'Dancing Script', cursive" style="font-family: 'Dancing Script', cursive;">Dancing Script</option>
+                  <option value="'Permanent Marker', cursive" style="font-family: 'Permanent Marker', cursive;">Permanent Marker</option>
+                  <option value="'Indie Flower', cursive" style="font-family: 'Indie Flower', cursive;">Indie Flower</option>
+                  <option value="'Shadows Into Light', cursive" style="font-family: 'Shadows Into Light', cursive;">Shadows Into Light</option>
+                  <option value="Caveat, cursive" style="font-family: Caveat, cursive;">Caveat</option>
+                </optgroup>
+                <optgroup label="Monospace (code)">
+                  <option value="'JetBrains Mono', monospace" style="font-family: 'JetBrains Mono', monospace;">JetBrains Mono</option>
+                  <option value="'Source Code Pro', monospace" style="font-family: 'Source Code Pro', monospace;">Source Code Pro</option>
+                  <option value="'Fira Code', monospace" style="font-family: 'Fira Code', monospace;">Fira Code</option>
+                  <option value="'Courier Prime', monospace" style="font-family: 'Courier Prime', monospace;">Courier Prime</option>
+                  <option value="'Space Mono', monospace" style="font-family: 'Space Mono', monospace;">Space Mono</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Taille Police -->
+            <div>
+              <label class="font-semibold block mb-1 text-sm">Taille Police</label>
+              <div class="flex items-center gap-2">
+                <input type="range" x-model="fontSize" @input="onFontChange()" min="10" max="28" step="1" class="flex-1" title="Ajuster la taille de police" />
+                <span class="text-sm font-mono w-16 text-center font-semibold" x-text="fontSize + 'px'"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Toolbar ligne 3 : Exports -->
+        <section class="bg-white/60 border border-gray-200 rounded-2xl p-4">
+          <div class="flex items-center gap-4">
+            <label class="brand-subtitle text-sm">Export</label>
+            <div class="flex gap-2 flex-1">
+              <button @click="exportSvg()" class="export-tile flex-1" style="height: 48px; font-size: 0.9rem;" aria-label="Exporter en SVG" title="Exporter en SVG">SVG</button>
+              <button @click="exportPng()" class="export-tile flex-1" style="height: 48px; font-size: 0.9rem;" aria-label="Exporter en PNG (transparent)" title="Exporter en PNG">PNG</button>
+              <button @click="exportJpeg()" class="export-tile flex-1" style="height: 48px; font-size: 0.9rem;" aria-label="Exporter en JPEG" title="Exporter en JPEG">JPEG</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Preview -->
+        <section class="neo-card">
+          <div class="neo-card-header"><h2 class="section-title">Aperçu</h2></div>
+          <div class="px-6 pb-6">
+            <div class="preview-container"><div id="preview" class="w-full min-h-[400px]"></div></div>
+          </div>
+        </section>
+      </div>
+      
+      <!-- Section 3: Images -->
+      <section class="neo-card" id="images">
+        <div class="neo-card-header">
+          <h2 class="section-title">Images</h2>
+        </div>
+        <div class="px-4 pb-4 space-y-4">
+          <!-- Zone upload -->
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+            <input type="file" id="imageUpload" @change="addImage($event)" accept="image/jpeg,image/png" multiple class="hidden">
+            <label for="imageUpload" class="cursor-pointer">
+              <div class="text-sm font-semibold">Cliquez pour ajouter des images</div>
+              <div class="text-xs text-gray-500 mt-1">JPEG/PNG • Max 2 Mo/image • Max 10 images</div>
+            </label>
+          </div>
+          
+          <!-- Galerie -->
+          <div x-show="currentProject.images.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <template x-for="(img, idx) in currentProject.images" :key="img.id">
+              <div class="border border-gray-200 rounded-lg p-2 space-y-2">
+                <div class="relative">
+                  <img :src="img.dataUrl" :alt="img.name" class="w-full h-32 object-cover rounded">
+                  <div class="absolute top-1 right-1 flex gap-1">
+                    <button @click="moveImageUp(idx)" :disabled="idx === 0" class="bg-white rounded px-2 py-1 text-xs shadow hover:bg-gray-100" title="Monter">⬆️</button>
+                    <button @click="moveImageDown(idx)" :disabled="idx === currentProject.images.length - 1" class="bg-white rounded px-2 py-1 text-xs shadow hover:bg-gray-100" title="Descendre">⬇️</button>
+                  </div>
+                </div>
+                <input type="text" x-model="img.caption" class="neo-input text-xs" placeholder="Légende...">
+                <button @click="removeImage(img.id)" class="neo-btn text-xs w-full">🗑️ Supprimer</button>
+              </div>
+            </template>
+          </div>
+          
+          <div x-show="currentProject.images.length === 0" class="text-center text-gray-500 text-sm py-4">
+            Aucune image ajoutée
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 4: PDF -->
+      <section class="neo-card" id="pdf">
+        <div class="neo-card-header">
+          <h2 class="section-title">Export PDF</h2>
+        </div>
+        <div class="px-4 pb-4 space-y-4">
+          <!-- En-tête du document -->
+          <div class="border-b pb-3 mb-3">
+            <h3 class="brand-subtitle text-lg mb-3">En-tête du document</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-semibold mb-1">Titre du document (nom du projet)</label>
+                <input type="text" x-model="currentProject.pdfConfig.title" @input="currentProject.name = currentProject.pdfConfig.title" class="neo-input" placeholder="Document">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">Client</label>
+                <input type="text" x-model="currentProject.pdfConfig.client" class="neo-input" placeholder="Nom du client">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">Sous-titre / Version</label>
+                <input type="text" x-model="currentProject.pdfConfig.subtitle" class="neo-input" placeholder="v1.0">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">Logo</label>
+                <input type="file" @change="uploadLogo($event)" accept="image/png,image/jpeg" class="hidden" id="logoUpload">
+                <div class="flex gap-2">
+                  <button @click="document.getElementById('logoUpload').click()" type="button" class="neo-btn">Choisir un fichier</button>
+                  <button @click="setDefaultLogo()" type="button" class="neo-btn">Logo Enovacom</button>
+                  <button @click="currentProject.pdfConfig.logo = ''" type="button" class="neo-btn" :disabled="!currentProject.pdfConfig.logo">Retirer</button>
+                </div>
+                <div x-show="currentProject.pdfConfig.logo" class="mt-2">
+                  <img :src="currentProject.pdfConfig.logo" alt="Logo" class="h-12 border border-gray-300 rounded">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pied de page -->
+          <div class="border-b pb-3 mb-3">
+            <h3 class="brand-subtitle text-lg mb-3">Pied de page</h3>
+            <div class="grid grid-cols-1 gap-3">
+              <div>
+                <label class="block text-sm font-semibold mb-1">Mentions légales</label>
+                <input type="text" x-model="currentProject.pdfConfig.legal" class="neo-input" placeholder="ENOVACOM - Tous droits réservés">
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" x-model="currentProject.pdfConfig.watermark" class="w-4 h-4">
+                  <span class="text-sm font-semibold">Watermark "CONFIDENTIEL"</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          
+          
+          <!-- Boutons génération -->
+          <div class="flex gap-2 flex-wrap">
+            <button @click="generatePDF()" :disabled="isGeneratingPDF" class="neo-btn neo-btn-primary">
+              <span x-show="!isGeneratingPDF" class="inline-flex items-center gap-2">
+                <svg aria-hidden="true" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <path d="M14 2v6h6"/>
+                  <path d="M9 13h6"/>
+                  <path d="M9 17h6"/>
+                </svg>
+                Télécharger PDF
+              </span>
+              <span x-show="isGeneratingPDF">Génération PDF...</span>
+            </button>
+            <button @click="generateDOCX()" :disabled="isGeneratingDOCX" class="neo-btn neo-btn-primary">
+              <span x-show="!isGeneratingDOCX" class="inline-flex items-center gap-2">
+                <svg aria-hidden="true" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <path d="M14 2v6h6"/>
+                  <path d="M8 12l1.5 6L12 14l2.5 4 1.5-6"/>
+                </svg>
+                Télécharger Word
+              </span>
+              <span x-show="isGeneratingDOCX">Génération Word...</span>
+            </button>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 5: Historique des projets -->
+      <section class="neo-card" id="historique">
+        <div class="neo-card-header flex items-center justify-between">
+          <h2 class="section-title">Historique des projets</h2>
+          <button x-show="projects.length > 0" @click="clearAllProjects()" class="text-sm text-red-600 hover:text-red-700 font-medium px-3 py-1 rounded hover:bg-red-50 transition">
+            Tout effacer
+          </button>
+        </div>
+        <div class="px-4 pb-4">
+          <div x-show="projects.length > 0" class="space-y-2">
+            <template x-for="project in projects" :key="project.id">
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center justify-between hover:bg-gray-50">
+                <div class="flex-1">
+                  <div class="font-semibold" x-text="project.name || project.pdfConfig?.title || 'Sans titre'"></div>
+                  <div class="text-xs text-gray-500" x-text="new Date(project.updatedAt).toLocaleString('fr-FR')"></div>
+                </div>
+                <div class="flex gap-2">
+                  <button @click="loadProject(project.id)" class="neo-btn text-xs">Ouvrir</button>
+                  <button @click="deleteProject(project.id)" class="neo-btn text-xs">Supprimer</button>
+                </div>
+              </div>
+            </template>
+          </div>
+          
+          <div x-show="projects.length === 0" class="text-center text-gray-500 text-sm py-4">
+            Aucun projet sauvegardé
+          </div>
+        </div>
+      </section>
+      
+    </div>
+  </main>
+
+  <!-- Paramètres -->
+  <div x-show="showSettings" x-cloak class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="showSettings = false">
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-2xl max-w-md w-full p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="brand-subtitle text-xl">Paramètres IA</h3>
+        <button @click="showSettings = false" class="neo-btn neo-btn-icon" title="Fermer"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <form class="space-y-6" @submit.prevent>
+        <!-- Sélection du fournisseur -->
+        <div>
+          <label class="font-semibold block mb-2">Fournisseur IA</label>
+          <select x-model="settingsForm.provider" @change="onProviderChange()" class="neo-input">
+            <option value="mistral">Mistral AI</option>
+            <option value="openai">OpenAI (GPT-4)</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="ollama">Ollama (Local)</option>
+          </select>
+        </div>
+        
+        <!-- Base URL (auto-rempli selon le provider) -->
+        <div>
+          <label class="font-semibold block mb-2">Base URL</label>
+          <input x-model="settingsForm.base_url" type="url" class="neo-input" :placeholder="getProviderPlaceholder()" autocomplete="url"/>
+        </div>
+        
+        <!-- API Key (caché pour Ollama) -->
+        <div x-show="settingsForm.provider !== 'ollama'">
+          <label class="font-semibold block mb-2">API Key</label>
+          <input x-model="settingsForm.api_key" type="password" class="neo-input" placeholder="Votre clé API..." autocomplete="new-password"/>
+          <p class="text-xs text-gray-500 mt-1" x-text="getApiKeyHint()"></p>
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button @click="testConnection()" class="neo-btn w-full">Tester</button>
+          <button @click="saveSettings()" class="neo-btn neo-btn-primary w-full">Sauvegarder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Aide -->
+  <div x-show="showHelp" x-cloak class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="showHelp = false">
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b p-6 rounded-t-2xl flex justify-between items-center" style="background: linear-gradient(135deg, #0C4A45 0%, #0f5650 100%);">
+        <div>
+          <h3 class="text-2xl font-bold text-white">Guide Complet - Enovacom SmartReport</h3>
+          <p class="text-white/80 text-sm mt-1">Créez des diagrammes professionnels en quelques clics</p>
+        </div>
+        <button @click="showHelp = false" class="neo-btn neo-btn-icon bg-white/20 hover:bg-white/30 text-white border-white/30" title="Fermer"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="p-8 space-y-8 text-sm text-gray-800">
+        <!-- Introduction compatibilité API et bonnes pratiques -->
+        <section class="space-y-3">
+          <h3 class="brand-subtitle text-2xl">Compatibilité API & bonnes pratiques</h3>
+          <p class="text-base">
+            SmartReport est compatible avec plusieurs fournisseurs d'API d'IA : <strong>ChatGPT (OpenAI)</strong>, <strong>Mistral</strong>, <strong>DeepSeek</strong>, ainsi que des solutions <strong>locales</strong> comme <strong>Ollama</strong>.
+          </p>
+          <p class="text-base">
+            Nous vous recommandons d’ouvrir une <strong>clé gratuite chez Mistral</strong> : l’hébergement est en <strong>France</strong> et conforme <strong>RGPD</strong>. Même si SmartReport n’envoie pas de données sensibles, adoptez ce <strong>réflexe de sécurité</strong> lorsque vous transmettez des données <em>professionnelles</em> à des services d’IA.
+          </p>
+        </section>
+
+  <!-- Configuration Mistral AI -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Configuration Mistral AI (Gratuit)</h3>
+    <p class="text-base">SmartReport s'appuie sur l'IA pour générer des diagrammes et structurer vos comptes rendus. Pour l'activer, créez une clé API chez Mistral : le <strong>plan gratuit</strong> suffit.</p>
+    
+    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-xl p-5 mt-4">
+      <h4 class="brand-subtitle text-lg mb-3">Étapes de configuration</h4>
+      
+      <div class="space-y-4">
+        <!-- Étape 1 -->
+        <div class="bg-white rounded-lg p-4 border border-emerald-200">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+            <div class="flex-1">
+              <h5 class="brand-subtitle mb-2">Créer un compte Mistral AI</h5>
+              <p class="mb-2">Rendez-vous sur la plateforme Mistral AI et créez un compte (le <strong>plan gratuit</strong> donne une clé API) :</p>
+              <a href="https://console.mistral.ai" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-semibold">
+                Ouvrir console.mistral.ai
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+              </a>
+              <p class="text-xs text-gray-600 mt-2">Astuce : Utilisez votre email professionnel ou personnel</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Étape 2 -->
+        <div class="bg-white rounded-lg p-4 border border-emerald-200">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+            <div class="flex-1">
+              <h5 class="brand-subtitle mb-2">Générer une clé API</h5>
+              <ol class="list-disc pl-5 space-y-1 mb-2">
+                <li>Dans le menu, ouvrez <strong>API Keys</strong></li>
+                <li>Cliquez sur <strong>Create new key</strong></li>
+                <li>Nommez-la (ex: <em>SmartReport</em>)</li>
+                <li>Copiez la clé (format <code class="bg-gray-100 px-2 py-1 rounded">sk-...</code>) et gardez-la</li>
+              </ol>
+              <div class="bg-yellow-50 border border-yellow-300 rounded p-3 mt-2">
+                <p class="text-sm"><strong>Important :</strong> Copiez et sauvegardez votre clé immédiatement, elle ne sera plus visible après !</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Étape 3 -->
+        <div class="bg-white rounded-lg p-4 border border-emerald-200">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+            <div class="flex-1">
+              <h5 class="brand-subtitle mb-2">Configurer dans SmartReport</h5>
+              <ol class="list-disc pl-5 space-y-1 mb-2">
+                <li>Cliquez sur <strong>Paramètres</strong> (en haut à droite)</li>
+                <li>Collez votre clé dans <strong>API Key</strong></li>
+                <li>URL par défaut : <code class="bg-gray-100 px-2 py-1 rounded">https://api.mistral.ai</code></li>
+                <li>Cliquez sur <strong>Tester</strong>, puis <strong>Sauvegarder</strong></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Étape 4 -->
+        <div class="bg-white rounded-lg p-4 border border-green-200">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">✓</div>
+            <div class="flex-1">
+              <h5 class="font-bold text-base mb-2 text-green-900">C'est prêt !</h5>
+              <p>Vous pouvez maintenant utiliser l'IA pour générer des diagrammes automatiquement.</p>
+              <p class="mt-2 text-sm text-gray-600">Les modèles disponibles s'afficheront dans le sélecteur en haut de la page.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liens utiles -->
+    <div class="bg-gray-50 border border-gray-300 rounded-lg p-4 mt-4">
+      <h5 class="font-bold text-base mb-3">Liens utiles</h5>
+      <div class="space-y-2">
+        <a href="https://console.mistral.ai" target="_blank" class="block text-blue-600 hover:text-blue-800 hover:underline">
+          → Console Mistral AI (création de compte et clés API)
+        </a>
+        <a href="https://docs.mistral.ai" target="_blank" class="block text-blue-600 hover:text-blue-800 hover:underline">
+          → Documentation Mistral AI
+        </a>
+        <a href="https://mistral.ai/pricing" target="_blank" class="block text-blue-600 hover:text-blue-800 hover:underline">
+          → Tarifs et offres Mistral AI
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Démarrage rapide -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Démarrage rapide</h3>
+    <p class="text-base">Enovacom SmartReport transforme vos idées en diagrammes professionnels en quelques secondes grâce à l'IA.</p>
+    
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
+      <h4 class="font-bold text-base mb-2">3 façons de créer un diagramme</h4>
+      <ol class="list-decimal pl-5 space-y-1">
+        <li><strong>Avec l'IA</strong> : Décrivez votre diagramme en français dans la zone de texte et cliquez sur "Générer"</li>
+        <li><strong>Par dictée vocale</strong> : Cliquez sur 🎤 et parlez, l'IA comprendra votre demande</li>
+        <li><strong>Manuellement</strong> : Écrivez directement le code Mermaid dans l'éditeur</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Exemples de prompts IA -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Exemples de prompts IA</h3>
+    
+    <div class="bg-amber-50 border-l-4 border-amber-500 p-4">
+      <p class="font-bold text-base mb-2">Important : Précisez toujours le type de diagramme au début de votre prompt !</p>
+    </div>
+
+    <div class="space-y-3 mt-4">
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <h5 class="font-bold mb-2">Pour un Flowchart :</h5>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+          <li><code class="bg-white px-2 py-1 rounded border">Flowchart : Crée un diagramme du processus d'admission d'un patient à l'hôpital</code></li>
+          <li><code class="bg-white px-2 py-1 rounded border">Flowchart : Montre-moi le workflow de validation d'une ordonnance</code></li>
+        </ul>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <h5 class="font-bold mb-2">Pour un diagramme de Séquence :</h5>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+          <li><code class="bg-white px-2 py-1 rounded border">Sequence : Diagramme des échanges entre patient, infirmier et médecin lors d'une consultation</code></li>
+          <li><code class="bg-white px-2 py-1 rounded border">Sequence : Interactions entre le système de prescription et la pharmacie</code></li>
+        </ul>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <h5 class="font-bold mb-2">Pour un diagramme de Classes :</h5>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+          <li><code class="bg-white px-2 py-1 rounded border">Class : Modélise les entités Patient, Médecin, Consultation et Ordonnance</code></li>
+        </ul>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <h5 class="font-bold mb-2">Pour un diagramme d'États :</h5>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+          <li><code class="bg-white px-2 py-1 rounded border">State : États d'une demande d'examen médical de la création à l'archivage</code></li>
+        </ul>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+        <h5 class="font-bold mb-2">Autres types :</h5>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+          <li><code class="bg-white px-2 py-1 rounded border">ER : Relations entre Patient, Médecin, Consultation et Ordonnance</code></li>
+          <li><code class="bg-white px-2 py-1 rounded border">Gantt : Planning d'un projet de déploiement sur 6 mois</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Personnalisation -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Personnalisation</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h5 class="brand-subtitle mb-2">Thèmes</h5>
+        <p>Choisissez parmi 30+ thèmes professionnels classés par catégorie (Pro, Sombres, Bleus, Verts, etc.)</p>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h5 class="brand-subtitle mb-2">Couleurs</h5>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><strong>Bordure</strong> : Couleur des contours</li>
+          <li><strong>Remplissage</strong> : Couleur de fond</li>
+          <li><strong>Texte</strong> : Couleur du texte</li>
+        </ul>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h5 class="font-bold mb-2">🔤 Police</h5>
+        <p>Plus de 40 polices disponibles : modernes, professionnelles, fantaisie ou monospace</p>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h5 class="brand-subtitle mb-2">Taille de police</h5>
+        <p>Ajustez de 10px à 28px avec le curseur</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Export -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Export</h3>
+    <p>Téléchargez vos diagrammes en 3 formats :</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+        <div class="text-3xl mb-2">📄</div>
+        <h5 class="font-bold">SVG</h5>
+        <p class="text-xs mt-1">Vectoriel, qualité parfaite, idéal pour l'impression</p>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+        <div class="text-3xl mb-2">🖼️</div>
+        <h5 class="font-bold">PNG</h5>
+        <p class="text-xs mt-1">Fond transparent, parfait pour les présentations</p>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+        <div class="text-3xl mb-2">📸</div>
+        <h5 class="font-bold">JPEG</h5>
+        <p class="text-xs mt-1">Fond blanc, compatible partout</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Syntaxe Mermaid -->
+  <section class="space-y-4">
+    <h3 class="brand-subtitle text-2xl">Syntaxe Mermaid - L'essentiel</h3>
+
+    <!-- Flowchart -->
+    <div class="border-l-4 border-primary pl-4">
+      <h4 class="text-lg font-bold mb-2">Flowchart (organigramme)</h4>
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto text-xs leading-5"><code>flowchart LR
+    A[Début] --&gt; B{Décision?}
+    B --&gt;|Oui| C[Action 1]
+    B --&gt;|Non| D[Action 2]
+    C --&gt; E[Fin]
+    D --&gt; E</code></pre>
+      <div class="mt-3 grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">[Texte]</code> Rectangle</div>
+        <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">(Texte)</code> Coins arrondis</div>
+        <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">{Texte}</code> Losange</div>
+        <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">((Texte))</code> Cercle</div>
+        <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">[[Texte]]</code> Sous-routine</div>
+        <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">[(Texte)]</code> Base de données</div>
+      </div>
+      <div class="mt-3">
+        <p class="font-semibold text-xs mb-2">Flèches :</p>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+          <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">--&gt;</code> Simple</div>
+          <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">-.-&gt;</code> Pointillée</div>
+          <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">==&gt;</code> Épaisse</div>
+          <div class="text-xs"><code class="bg-gray-100 px-2 py-1 rounded">--&gt;|Texte|</code> Avec label</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sequence -->
+    <div class="border-l-4 border-primary pl-4">
+      <h4 class="text-lg font-bold mb-2">Sequence (diagramme de séquence)</h4>
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto text-xs leading-5"><code>sequenceDiagram
+    Patient-&gt;&gt;Infirmier: Arrivée
+    Infirmier-&gt;&gt;Médecin: Dossier patient
+    Médecin--&gt;&gt;Infirmier: Instructions
+    Infirmier--&gt;&gt;Patient: Prise en charge</code></pre>
+    </div>
+
+    <!-- Class -->
+    <div class="border-l-4 border-primary pl-4">
+      <h4 class="text-lg font-bold mb-2">Class (diagramme de classes)</h4>
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto text-xs leading-5"><code>classDiagram
+    Patient --&gt; Consultation
+    Médecin --&gt; Consultation
+    Consultation --&gt; Ordonnance
+    
+    class Patient {
+        +String nom
+        +Date naissance
+        +consulter()
+    }</code></pre>
+    </div>
+
+    <!-- State -->
+    <div class="border-l-4 border-primary pl-4">
+      <h4 class="text-lg font-bold mb-2">State (diagramme d'états)</h4>
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto text-xs leading-5"><code>stateDiagram-v2
+    [*] --&gt; Créé
+    Créé --&gt; EnCours : Démarrer
+    EnCours --&gt; Validé : Approuver
+    EnCours --&gt; Rejeté : Refuser
+    Validé --&gt; [*]
+    Rejeté --&gt; [*]</code></pre>
+    </div>
+
+    <!-- ER -->
+    <div class="border-l-4 border-primary pl-4">
+      <h4 class="text-lg font-bold mb-2">ER Diagram (entité-relation)</h4>
+      <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto text-xs leading-5"><code>erDiagram
+    PATIENT ||--o{ CONSULTATION : a
+    MEDECIN ||--o{ CONSULTATION : réalise
+    CONSULTATION ||--o{ ORDONNANCE : génère</code></pre>
+    </div>
+  </section>
+
+  <!-- Astuces -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Astuces</h3>
+    <div class="bg-green-50 border-l-4 border-green-500 p-4">
+      <ul class="space-y-2">
+        <li>✅ <strong>Utilisez l'historique</strong> : Vos 10 derniers prompts sont sauvegardés, cliquez dessus pour les réutiliser</li>
+        <li>✅ <strong>Démos rapides</strong> : Cliquez sur "Démo Diagramme" pour charger des exemples</li>
+        <li>✅ <strong>Validation en temps réel</strong> : Un ✅ vert indique que votre syntaxe est correcte</li>
+        <li>✅ <strong>Raccourci clavier</strong> : Ctrl+Enter pour générer avec l'IA</li>
+        <li>✅ <strong>Précisez le type</strong> : Commencez toujours votre prompt par le type de diagramme (Flowchart, Sequence, Class, State, ER, Gantt, etc.)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Configuration -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Configuration</h3>
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+      <h5 class="font-bold mb-2">Paramètres Mistral AI</h5>
+      <ol class="list-decimal pl-5 space-y-1">
+        <li>Cliquez sur "Paramètres"</li>
+        <li>Entrez votre clé API Mistral</li>
+        <li>Testez la connexion</li>
+        <li>Sauvegardez</li>
+      </ol>
+      <div class="mt-3 bg-white border border-gray-300 rounded p-3">
+        <p class="font-semibold text-sm mb-2">Modèles recommandés :</p>
+        <ul class="list-disc pl-5 space-y-1 text-sm">
+          <li><code>mistral-large-latest</code> : Le plus puissant</li>
+          <li><code>mistral-medium-latest</code> : Bon équilibre</li>
+          <li><code>mistral-small-latest</code> : Rapide et économique</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Support -->
+  <section class="space-y-3">
+    <h3 class="brand-subtitle text-2xl">Support</h3>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <p class="mb-3">Pour toute question ou problème :</p>
+      <ul class="space-y-2">
+        <li>📧 <strong>Email :</strong> <a href="mailto:sebastien.voerman@enovacom.com" class="text-blue-600 hover:underline">sebastien.voerman@enovacom.com</a></li>
+        <li>📚 <strong>Documentation Mermaid complète :</strong> <a href="https://mermaid.js.org" target="_blank" class="text-blue-600 hover:underline">https://mermaid.js.org</a></li>
+        <li>💡 <strong>Besoin d'aide ?</strong> Décrivez simplement ce que vous voulez, l'IA s'occupe du reste !</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Footer message -->
+  <div class="text-center py-6 border-t border-gray-200">
+    <p class="text-lg font-bold text-primary">Vous êtes prêt à créer des diagrammes professionnels ! 🚀</p>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+
+  <!-- App -->
+  <script>
+    function app(){
+      return {
+        prompt:'',
+        promptHistory:[], // Historique des 10 derniers prompts
+        mermaidCode:`sequenceDiagram
+autonumber
+participant Patient
+participant GAMME as GAMME (Gestion Admission)
+participant DPI as DPI (Dossier Patient Informatisé)
+Patient->>GAMME: ADT^A01 (Admission)
+GAMME->>DPI: ADT^A01 (Création dossier patient)
+`,
+        models:[], selectedModel:'', loading:false, loadingModels:false, lastError:'',
+        showSettings:false, showHelp:false,
+        
+        // Nouvelles propriétés pour Phase 1
+        currentProject: {
+          id: null,
+          name: '',
+          diagram: { mermaid: '', svg: '', include: true, position: 'before_report', title: 'Diagramme' },
+          report: { template: 'client_formel', rawNotes: '', generated: '', meta: { date: '', participants: '' } },
+          images: [],
+          pdfConfig: { 
+            logo: '', title: 'Document', client: '', subtitle: '', 
+            footer: '{page}/{pages} • {projet} • {date}', legal: 'ENOVACOM - Tous droits réservés', 
+            watermark: false, 
+            theme: { font: 'Inter', primary: '#0C4A45', margins: { top: 24, right: 18, bottom: 28, left: 18 } },
+            order: ['report', 'images', 'diagram']  // Compte rendu en PREMIER pour faciliter copier-coller
+          }
+        },
+        projects: [],
+        isGeneratingReport: false,
+        isGeneratingPDF: false,
+        isGeneratingDOCX: false,
+        quillEditor: null, // Instance de l'éditeur Quill
+        reportTemplates: [
+          { id: 'client_formel', name: 'Client (formel)' },
+          { id: 'sprint_agile', name: 'Sprint Agile' },
+          { id: 'brief_technique', name: 'Brief technique' },
+          { id: 'crm_echange', name: 'CRM Échange & Partage' }
+        ],
+        defaultLogoUrl: '{{ url_for("static", filename="enovacom_logo.png") }}',
+
+        // Visuels - VALEURS PAR DÉFAUT (Enovacom + Poppins)
+        theme:'enovacom',
+        primaryColor:'#0C4A45',
+        fillColor:'#E8F5F4',      // Couleur de remplissage des éléments
+        borderColor:'#0C4A45',     // Couleur des bordures
+        textColor:'#0e1f1c',       // Couleur du texte
+        fontFamily:"Poppins, sans-serif",  // Police par défaut : Poppins
+        fontSize:16, // Taille par défaut plus lisible
+        isRecording:false, 
+        isRecordingNotes:false,
+        recognition:null,
+        notesRecognition:null,
+        selectedDiagramType:'',
+        // Dropdown states
+        showBorderPalette:false,
+        showFillPalette:false,
+        showTextPalette:false,
+
+        // Presets for custom color pickers
+        borderPresets:[
+          {label:'Couleurs vives', items:[
+            {name:'Rouge', color:'#EF4444'}, {name:'Orange', color:'#F97316'}, {name:'Ambre', color:'#F59E0B'},
+            {name:'Jaune', color:'#EAB308'}, {name:'Citron', color:'#84CC16'}, {name:'Vert', color:'#22C55E'},
+            {name:'Émeraude', color:'#10B981'}, {name:'Turquoise', color:'#14B8A6'}, {name:'Cyan', color:'#06B6D4'},
+            {name:'Bleu ciel', color:'#0EA5E9'}, {name:'Bleu', color:'#3B82F6'}, {name:'Indigo', color:'#6366F1'},
+            {name:'Violet', color:'#8B5CF6'}, {name:'Pourpre', color:'#A855F7'}, {name:'Fuchsia', color:'#D946EF'},
+            {name:'Rose', color:'#EC4899'}
+          ]},
+          {label:'Couleurs professionnelles', items:[
+            {name:'Enovacom', color:'#0C4A45'}, {name:'Bleu marine', color:'#1E3A8A'}, {name:'Bleu royal', color:'#1E40AF'},
+            {name:'Violet pro', color:'#7C3AED'}, {name:'Rose pro', color:'#BE185D'}, {name:'Bordeaux', color:'#9F1239'},
+            {name:'Forêt', color:'#065F46'}, {name:'Océan', color:'#0F766E'}
+          ]},
+          {label:'Couleurs neutres', items:[
+            {name:'Gris', color:'#6B7280'}, {name:'Gris foncé', color:'#4B5563'}, {name:'Charbon', color:'#1F2937'}, {name:'Noir', color:'#111827'}
+          ]}
+        ],
+        fillPresets:[
+          {label:'Couleurs vives', items:[
+            {name:'Rouge clair', color:'#FEE2E2'}, {name:'Orange clair', color:'#FFEDD5'}, {name:'Jaune clair', color:'#FEF3C7'},
+            {name:'Citron clair', color:'#ECFCCB'}, {name:'Vert clair', color:'#D1FAE5'}, {name:'Turquoise clair', color:'#CCFBF1'},
+            {name:'Bleu clair', color:'#DBEAFE'}, {name:'Indigo clair', color:'#E0E7FF'}, {name:'Violet clair', color:'#EDE9FE'}, {name:'Rose clair', color:'#FCE7F3'}
+          ]},
+          {label:'Couleurs neutres', items:[
+            {name:'Gris très clair', color:'#F9FAFB'}, {name:'Gris clair', color:'#F3F4F6'}, {name:'Gris moyen', color:'#E5E7EB'}, {name:'Blanc', color:'#FFFFFF'}
+          ]},
+          {label:'Couleurs professionnelles', items:[
+            {name:'Bleu ciel', color:'#E8F5F4'}, {name:'Graphite clair', color:'#F1F5F9'}, {name:'Ardoise clair', color:'#F8FAFC'},
+            {name:'Jaune', color:'#FEF9C3'}, {name:'Émeraude clair', color:'#ECFDF5'}
+          ]}
+        ],
+        textPresets:[
+          {label:'Textes foncés', items:[
+            {name:'Noir', color:'#111827'}, {name:'Gris très foncé', color:'#1F2937'}, {name:'Gris foncé', color:'#374151'}, {name:'Gris moyen', color:'#4B5563'}
+          ]},
+          {label:'Textes clairs', items:[
+            {name:'Blanc cassé', color:'#F9FAFB'}, {name:'Blanc', color:'#FFFFFF'}, {name:'Gris clair', color:'#E5E7EB'}
+          ]}
+        ],
+
+        // Thèmes riches (couleur des boîtes + fond canvas) - Organisés par catégories
+        availableThemes:[
+          // Thèmes Clairs Professionnels
+          {id:'enovacom',name:'Enovacom', stroke:'#0C4A45', boxBg:'#E8F5F4', boxBorder:'#0C4A45', boxText:'#0e1f1c', canvasBg:'#ffffff', category:'pro'},
+          {id:'graphite',name:'Graphite',  stroke:'#334155', boxBg:'#F1F5F9', boxBorder:'#334155', boxText:'#0F172A', canvasBg:'#ffffff', category:'pro'},
+          {id:'neutral', name:'Neutre',    stroke:'#6B7280', boxBg:'#F9FAFB', boxBorder:'#6B7280', boxText:'#374151', canvasBg:'#ffffff', category:'pro'},
+          {id:'ink',     name:'Encre',     stroke:'#111827', boxBg:'#F3F4F6', boxBorder:'#111827', boxText:'#111827', canvasBg:'#ffffff', category:'pro'},
+          {id:'slate',   name:'Ardoise',   stroke:'#475569', boxBg:'#F8FAFC', boxBorder:'#475569', boxText:'#1E293B', canvasBg:'#ffffff', category:'pro'},
+          
+          // Thèmes Sombres
+          {id:'midnight',name:'Midnight',  stroke:'#8B5CF6', boxBg:'#1f2937', boxBorder:'#8B5CF6', boxText:'#F3F4F6', canvasBg:'#0F172A', dark:true, category:'dark'},
+          {id:'darkblue',name:'Bleu Nuit', stroke:'#3B82F6', boxBg:'#1E293B', boxBorder:'#3B82F6', boxText:'#E2E8F0', canvasBg:'#0F172A', dark:true, category:'dark'},
+          {id:'carbon',  name:'Carbone',    stroke:'#10B981', boxBg:'#1F2937', boxBorder:'#10B981', boxText:'#F9FAFB', canvasBg:'#111827', dark:true, category:'dark'},
+          {id:'purple',  name:'Pourpre',   stroke:'#A855F7', boxBg:'#1E1B4B', boxBorder:'#A855F7', boxText:'#E9D5FF', canvasBg:'#0F0A1F', dark:true, category:'dark'},
+          
+          // Thèmes Bleus & Verts
+          {id:'ocean',   name:'Océan',     stroke:'#0EA5E9', boxBg:'#ECFEFF', boxBorder:'#0EA5E9', boxText:'#083344', canvasBg:'#F0FAFF', category:'blue'},
+          {id:'cyan',    name:'Cyan',      stroke:'#06B6D4', boxBg:'#ECFEFF', boxBorder:'#06B6D4', boxText:'#164E63', canvasBg:'#ffffff', category:'blue'},
+          {id:'sky',     name:'Ciel',       stroke:'#0284C7', boxBg:'#E0F2FE', boxBorder:'#0284C7', boxText:'#075985', canvasBg:'#F0F9FF', category:'blue'},
+          {id:'emerald', name:'Émeraude',  stroke:'#10B981', boxBg:'#ECFDF5', boxBorder:'#10B981', boxText:'#064E3B', canvasBg:'#ffffff', category:'green'},
+          {id:'forest',  name:'Forêt',     stroke:'#065F46', boxBg:'#ECFDF5', boxBorder:'#065F46', boxText:'#064E3B', canvasBg:'#ffffff', category:'green'},
+          {id:'lime',    name:'Citron',     stroke:'#84CC16', boxBg:'#F7FEE7', boxBorder:'#84CC16', boxText:'#365314', canvasBg:'#ffffff', category:'green'},
+          {id:'mint',    name:'Menthe',     stroke:'#14B8A6', boxBg:'#F0FDFA', boxBorder:'#14B8A6', boxText:'#134E4A', canvasBg:'#ffffff', category:'green'},
+          
+          // Thèmes Roses & Rouges - Couleurs plus variées
+          {id:'rose',    name:'Rose',       stroke:'#E11D48', boxBg:'#FFE4E6', boxBorder:'#E11D48', boxText:'#881337', canvasBg:'#ffffff', category:'pink'},
+          {id:'pink',    name:'Fuchsia',    stroke:'#EC4899', boxBg:'#FCE7F3', boxBorder:'#EC4899', boxText:'#831843', canvasBg:'#ffffff', category:'pink'},
+          {id:'magenta', name:'Magenta',    stroke:'#D946EF', boxBg:'#FAE8FF', boxBorder:'#D946EF', boxText:'#701A75', canvasBg:'#ffffff', category:'pink'},
+          
+          // Thèmes Violets
+          {id:'violet',  name:'Violet',    stroke:'#7C3AED', boxBg:'#F5F3FF', boxBorder:'#7C3AED', boxText:'#4C1D95', canvasBg:'#ffffff', category:'purple'},
+          {id:'lavender',name:'Lavande',   stroke:'#8B5CF6', boxBg:'#F5F3FF', boxBorder:'#8B5CF6', boxText:'#4C1D95', canvasBg:'#ffffff', category:'purple'},
+          {id:'indigo',  name:'Indigo',    stroke:'#6366F1', boxBg:'#EEF2FF', boxBorder:'#6366F1', boxText:'#312E81', canvasBg:'#ffffff', category:'purple'},
+          
+          // Thèmes Chauds - Couleurs plus distinctes
+          {id:'yellow',  name:'Jaune',     stroke:'#EAB308', boxBg:'#FEF9C3', boxBorder:'#EAB308', boxText:'#713F12', canvasBg:'#ffffff', category:'warm'},
+          {id:'amber',   name:'Ambre',      stroke:'#F59E0B', boxBg:'#FEF3C7', boxBorder:'#F59E0B', boxText:'#78350F', canvasBg:'#ffffff', category:'warm'},
+          {id:'orange',  name:'Orange',    stroke:'#F97316', boxBg:'#FFEDD5', boxBorder:'#F97316', boxText:'#7C2D12', canvasBg:'#ffffff', category:'warm'},
+          {id:'red',     name:'Rouge',     stroke:'#DC2626', boxBg:'#FEE2E2', boxBorder:'#DC2626', boxText:'#7F1D1D', canvasBg:'#ffffff', category:'warm'},
+          {id:'peach',   name:'Pêche',     stroke:'#FB923C', boxBg:'#FFEDD5', boxBorder:'#FB923C', boxText:'#7C2D12', canvasBg:'#ffffff', category:'warm'}
+        ],
+
+        settingsForm:{ provider:'mistral', base_url:'https://api.mistral.ai', api_key:'' },
+        aiProviders: {
+          mistral: { name: 'Mistral AI', baseUrl: 'https://api.mistral.ai', keyHint: 'Créez votre clé sur platform.mistral.ai' },
+          openai: { name: 'OpenAI', baseUrl: 'https://api.openai.com/v1', keyHint: 'Créez votre clé sur platform.openai.com' },
+          deepseek: { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com', keyHint: 'Créez votre clé sur platform.deepseek.com' },
+          gemini: { name: 'Google Gemini', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/', keyHint: 'Créez votre clé sur aistudio.google.com' },
+          ollama: { name: 'Ollama', baseUrl: 'http://localhost:11434', keyHint: 'Pas de clé requise (local)' }
+        },
+        renderTimeout:null,
+        saveTimeout:null,
+
+        /* ---- Helpers couleurs ---- */
+        mix(c1, c2, p){ // mélange 0..1
+          try {
+            // Sécuriser p entre 0 et 1
+            p = Math.max(0, Math.min(1, Math.abs(p)));
+            const a=this.hex2rgb(c1), b=this.hex2rgb(c2);
+            const r=Math.max(0, Math.min(255, Math.round(a.r+(b.r-a.r)*p)));
+            const g=Math.max(0, Math.min(255, Math.round(a.g+(b.g-a.g)*p)));
+            const bl=Math.max(0, Math.min(255, Math.round(a.b+(b.b-a.b)*p)));
+            return `#${[r,g,bl].map(x=>x.toString(16).padStart(2,'0')).join('')}`;
+          } catch(e) {
+            console.error('Mix error:', e, c1, c2, p);
+            return c1; // Retourner la couleur d'origine en cas d'erreur
+          }
+        },
+        hex2rgb(hex){ 
+          try {
+            const m=hex.replace('#',''); 
+            return {
+              r:parseInt(m.substr(0,2),16) || 0,
+              g:parseInt(m.substr(2,2),16) || 0,
+              b:parseInt(m.substr(4,2),16) || 0
+            };
+          } catch(e) {
+            return {r:0, g:0, b:0};
+          }
+        },
+
+        /* ---- Lifecycle ---- */
+        init(){
+          // Charger depuis localStorage
+          this.loadFromStorage();
+          
+          // FORCER le thème Enovacom si c'est le thème sélectionné
+          // Cela garantit que les couleurs correspondent bien au thème
+          if(this.theme === 'enovacom') {
+            this.applyTheme(); // Force les couleurs Enovacom
+          }
+          
+          this.applyFontToPage();
+          this.loadSettings();
+          this.loadModels();
+          this.initSpeech();
+          this.renderMermaid();
+          document.addEventListener('keydown',(e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); this.generate(); }});
+        },
+
+        loadFromStorage(){
+          try {
+            const c=localStorage;
+            
+            // Vérifier si c'est le premier lancement
+            const isFirstLaunch = !c.getItem('diagflow_theme');
+            
+            if(isFirstLaunch) {
+              // PREMIER LANCEMENT : Forcer Enovacom + Poppins
+              console.log('🎉 Premier lancement - Application des paramètres par défaut : Enovacom + Poppins');
+              this.theme = 'enovacom';
+              this.fontFamily = 'Poppins, sans-serif';
+              this.fontSize = 16;
+              // Les couleurs seront appliquées par applyTheme() dans init()
+            } else {
+              // Chargement normal depuis localStorage
+              const code=c.getItem('diagflow_code'); if(code) this.mermaidCode=code;
+              const theme=c.getItem('diagflow_theme'); if(theme) this.theme=theme;
+              const borderColor=c.getItem('diagflow_borderColor'); if(borderColor) this.borderColor=borderColor;
+              const fillColor=c.getItem('diagflow_fillColor'); if(fillColor) this.fillColor=fillColor;
+              const textColor=c.getItem('diagflow_textColor'); if(textColor) this.textColor=textColor;
+              const font=c.getItem('diagflow_font'); if(font) this.fontFamily=font;
+              const size=c.getItem('diagflow_fontSize'); if(size) this.fontSize=parseInt(size);
+              const model=c.getItem('diagflow_model'); if(model) this.selectedModel=model;
+              const history=c.getItem('diagflow_history'); if(history) try{ this.promptHistory=JSON.parse(history); }catch(e){}
+            }
+            
+            // Charger les projets (migration pathway_projects -> smartreport_projects)
+            const projectsData = c.getItem('smartreport_projects') || c.getItem('pathway_projects');
+            if(projectsData) {
+              try {
+                this.projects = JSON.parse(projectsData);
+              } catch(e) {
+                console.error('Erreur chargement projets:', e);
+                this.projects = [];
+              }
+            }
+          } catch(e) {
+            console.error('Erreur chargement localStorage:', e);
+            // En cas d'erreur, forcer les valeurs par défaut
+            this.theme = 'enovacom';
+            this.fontFamily = 'Poppins, sans-serif';
+            this.fontSize = 16;
+          }
+        },
+        saveToStorage(){
+          try {
+            const c=localStorage;
+            c.setItem('diagflow_code', this.mermaidCode);
+            c.setItem('diagflow_theme', this.theme);
+            c.setItem('diagflow_borderColor', this.borderColor);
+            c.setItem('diagflow_fillColor', this.fillColor);
+            c.setItem('diagflow_textColor', this.textColor);
+            c.setItem('diagflow_font', this.fontFamily);
+            c.setItem('diagflow_fontSize', this.fontSize.toString());
+            if(this.selectedModel) c.setItem('diagflow_model', this.selectedModel);
+            c.setItem('diagflow_history', JSON.stringify(this.promptHistory));
+          } catch(e) {
+            console.error('Erreur sauvegarde localStorage:', e);
+          }
+        },
+
+        // Charger les paramètres depuis le backend
+        async loadSettings(){
+          try {
+            const response = await fetch('/api/settings');
+            if(response.ok){
+              const data = await response.json();
+              // Charger le provider actif
+              const activeProvider = data.active_provider || 'mistral';
+              this.settingsForm.provider = activeProvider;
+              
+              // Charger l'URL du provider actif
+              const providerUrl = data[`${activeProvider}_base_url`] || this.aiProviders[activeProvider].baseUrl;
+              this.settingsForm.base_url = providerUrl;
+              
+              // Ne pas charger l'API key pour des raisons de sécurité (elle reste sur le serveur)
+            }
+          } catch(e){
+            console.error('Erreur chargement paramètres:', e);
+          }
+        },
+        
+        async loadModels(){
+          this.loadingModels=true; this.models=[]; this.selectedModel='';
+          try{
+            const r=await fetch('/api/ai/models');
+            if(r.ok){ 
+              const d=await r.json(); 
+              this.models=d.models||[]; 
+              this.selectedModel=this.models[0]||''; 
+              console.log(`✅ ${d.models?.length || 0} modèles ${d.provider} chargés`);
+            } else {
+              console.warn('Impossible de charger les modèles');
+            }
+          }catch(e){ 
+            console.warn('Erreur chargement modèles:', e);
+          }
+          finally{ this.loadingModels=false; this.saveToStorage(); }
+        },
+        
+        // Changement de fournisseur : mettre à jour l'URL par défaut
+        onProviderChange(){
+          const provider = this.aiProviders[this.settingsForm.provider];
+          if(provider){
+            this.settingsForm.base_url = provider.baseUrl;
+          }
+        },
+        
+        // Helpers pour l'interface
+        getProviderPlaceholder(){
+          const provider = this.aiProviders[this.settingsForm.provider];
+          return provider ? provider.baseUrl : 'URL de l\'API';
+        },
+        
+        getApiKeyHint(){
+          const provider = this.aiProviders[this.settingsForm.provider];
+          return provider ? provider.keyHint : '';
+        },
+        
+        // Tester la connexion
+        async testConnection(){
+          const provider = this.settingsForm.provider;
+          
+          // Validation
+          if(provider !== 'ollama' && !this.settingsForm.api_key.trim()){
+            this.showToast('Veuillez saisir une API Key', 'error');
+            return;
+          }
+          
+          try {
+            const response = await fetch('/api/ai/test', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                provider: provider,
+                base_url: this.settingsForm.base_url,
+                api_key: this.settingsForm.api_key
+              })
+            });
+            
+            if(response.ok){
+              const data = await response.json();
+              this.showToast(`✅ Connexion ${this.aiProviders[provider].name} réussie! ${data.models?.length || 0} modèles disponibles`, 'success');
+            } else {
+              const error = await response.json();
+              this.showToast(`❌ Erreur: ${error.error || 'Connexion échouée'}`, 'error');
+            }
+          } catch(e){
+            this.showToast(`❌ Erreur: ${e.message}`, 'error');
+          }
+        },
+        
+        // Sauvegarder les paramètres
+        async saveSettings(){
+          const provider = this.settingsForm.provider;
+          
+          // Validation
+          if(provider !== 'ollama' && !this.settingsForm.api_key.trim()){
+            this.showToast('Veuillez saisir une API Key', 'error');
+            return;
+          }
+          
+          try {
+            const response = await fetch('/api/ai/settings', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                provider: provider,
+                base_url: this.settingsForm.base_url,
+                api_key: this.settingsForm.api_key
+              })
+            });
+            
+            if(response.ok){
+              this.showToast(`✅ Paramètres ${this.aiProviders[provider].name} sauvegardés`, 'success');
+              // Recharger les modèles avec la nouvelle clé
+              await this.loadModels();
+              this.showSettings = false;
+            } else {
+              const error = await response.json();
+              this.showToast(`❌ Erreur: ${error.error || 'Sauvegarde échouée'}`, 'error');
+            }
+          } catch(e){
+            this.showToast(`❌ Erreur: ${e.message}`, 'error');
+          }
+        },
+        
+        // Rétro-compatibilité (anciennes fonctions)
+        async testMistralConnection(){ return this.testConnection(); },
+        async saveMistralSettings(){ return this.saveSettings(); },
+
+        debouncedRender(){ clearTimeout(this.renderTimeout); this.renderTimeout=setTimeout(()=>{ this.renderMermaid(); this.saveToStorage(); },250); },
+        debouncedSave(){ clearTimeout(this.saveTimeout); this.saveTimeout=setTimeout(()=>{ this.saveProject(); },300); },
+
+        /* ---- Thème ---- */
+        applyTheme(){
+          const th=this.availableThemes.find(t=>t.id===this.theme);
+          if(!th) return;
+          
+          // RESET COMPLET : Appliquer les couleurs du thème (écrase les personnalisations)
+          this.borderColor = th.boxBorder;
+          this.fillColor = th.boxBg;
+          this.textColor = th.boxText;
+          
+          console.log('Thème appliqué:', th.name, {
+            borderColor: this.borderColor,
+            fillColor: this.fillColor,
+            textColor: this.textColor
+          });
+
+          // Recolor UI seulement pour Enovacom (branding)
+          if(th.id==='enovacom'){
+            const r=document.documentElement.style;
+            r.setProperty('--primary', '#0C4A45'); r.setProperty('--primary-light', '#0f5650');
+            r.setProperty('--primary-dark', '#083832'); r.setProperty('--accent', '#22c55e');
+            r.setProperty('--accent-light', '#4ade80');
+          }
+          
+          this.saveToStorage();
+          
+          // Forcer le re-render immédiat pour voir le changement
+          this.renderMermaid();
+        },
+        onFontChange(){ 
+          this.applyFontToPage(); 
+          this.renderMermaid(); 
+          this.saveToStorage(); 
+        },
+        applyFontToPage(){ 
+          const preview=document.getElementById('preview'); 
+          if(preview){ 
+            preview.style.fontFamily = this.fontFamily;
+            preview.style.setProperty('--app-font', this.fontFamily);
+            // Appliquer aussi sur le SVG si présent
+            const svg = preview.querySelector('svg');
+            if(svg){
+              svg.style.fontFamily = this.fontFamily;
+              svg.querySelectorAll('*').forEach(el => {
+                if(el.tagName === 'text' || el.tagName === 'tspan'){
+                  el.style.fontFamily = this.fontFamily;
+                }
+              });
+            }
+          } 
+        },
+        updateColors(){ 
+          // Ne pas re-rendre, juste sauvegarder et forcer un refresh
+          this.saveToStorage();
+          // Attendre un peu puis re-rendre
+          setTimeout(() => this.renderMermaid(), 50);
+        },
+
+        /* ---- Rendu Mermaid avec couleurs de BOÎTES par thème ---- */
+        async renderMermaid(){
+          if(!this.mermaidCode.trim()){
+            document.getElementById('preview').innerHTML='<div class="text-gray-400 text-center py-8">Aucun code à afficher</div>'; return;
+          }
+          const th=this.availableThemes.find(t=>t.id===this.theme) || this.availableThemes[0];
+          const isDark=!!th.dark;
+          const cssFamily=this.fontFamily.replace(/"/g,"'");
+          const edgeBg=isDark ? this.mix(th.canvasBg,'#000',.3) : '#ffffff';
+
+          // Utiliser les couleurs personnalisées
+          const strokeColor = this.borderColor || th.boxBorder;
+          const fillBg = this.fillColor || th.boxBg;
+          const textCol = this.textColor || th.boxText;
+          
+          // Calculer les couleurs dérivées de manière sécurisée
+          const clusterFill = this.mix(fillBg, isDark ? '#000000' : '#ffffff', 0.15);
+          const noteFill = this.mix(fillBg, isDark ? '#000000' : '#ffffff', 0.1);
+          
+          const themeCSS = `
+            svg { 
+              background:${th.canvasBg} !important; 
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* POLICE ET TAILLE - Forcer sur TOUS les éléments texte */
+            text, tspan, .nodeLabel, .edgeLabel, .label, .messageText, .noteText,
+            .actor text, .labelText, .titleText, .classText, .stateText,
+            .er .entityLabel, .taskText, .sectionTitle, .gridLabel {
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* Flowchart - TOUS les types de noeuds */
+            .node rect, .node polygon, .node circle, .node ellipse, .node path { 
+              fill:${fillBg} !important; 
+              stroke:${strokeColor} !important; 
+            }
+            .node text, .nodeLabel { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* Flowchart - Formes spéciales (losanges, cercles, etc.) */
+            .label-container rect, .label-container polygon, .label-container circle { 
+              fill:${fillBg} !important; 
+              stroke:${strokeColor} !important; 
+            }
+            
+            /* Clusters / Subgraphs */
+            .cluster rect, .cluster polygon { 
+              fill:${clusterFill} !important; 
+              stroke:${strokeColor} !important; 
+            }
+            .cluster text, .cluster .nodeLabel { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* Edge labels & titles */
+            .edgeLabel, .label { 
+              color:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            .edgeLabel rect, .edgeLabel polygon { fill:${edgeBg} !important; }
+            .edgeLabel text { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* Sequence diagram */
+            .actor, .actor-box { fill:${fillBg} !important; stroke:${strokeColor} !important; }
+            .actor rect, .actor polygon { fill:${fillBg} !important; stroke:${strokeColor} !important; }
+            .actor text, .actor-man text { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            .note { fill:${noteFill} !important; stroke:${strokeColor} !important; }
+            .noteText, .messageText { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* Class diagram */
+            .classGroup rect { fill:${fillBg} !important; stroke:${strokeColor} !important; }
+            .classGroup text { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* State diagram */
+            .stateGroup rect, .stateGroup circle { fill:${fillBg} !important; stroke:${strokeColor} !important; }
+            .stateGroup text { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            
+            /* ER diagram */
+            .er .entityBox { fill:${fillBg} !important; stroke:${strokeColor} !important; }
+            .er .entityLabel { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+            .er .attributeBoxEven, .er .attributeBoxOdd { fill:${fillBg} !important; }
+            
+            /* Gantt */
+            .grid .tick { stroke:${strokeColor} !important; }
+            .taskText { 
+              fill:${textCol} !important;
+              font-family: ${cssFamily} !important;
+              font-size: ${this.fontSize}px !important;
+            }
+          `;
+
+          try{
+            mermaid.initialize({
+              startOnLoad:false,
+              securityLevel:'loose',
+              theme: 'base',
+              themeVariables:{
+                fontFamily: cssFamily,
+                fontSize: this.fontSize + 'px',
+                
+                // Couleurs principales
+                primaryColor: fillBg,
+                primaryBorderColor: strokeColor,
+                primaryTextColor: textCol,
+                
+                // Lignes et bordures
+                lineColor: strokeColor,
+                border1: strokeColor,
+                border2: strokeColor,
+                
+                // Backgrounds
+                background: th.canvasBg,
+                mainBkg: fillBg,
+                secondBkg: fillBg,
+                tertiaryColor: fillBg,
+                
+                // Clusters
+                clusterBkg: clusterFill,
+                clusterBorder: strokeColor,
+                
+                // Notes et labels
+                noteBkgColor: noteFill,
+                noteBorderColor: strokeColor,
+                edgeLabelBackground: edgeBg,
+                labelColor: textCol,
+                
+                // Sequence diagram
+                actorBkg: fillBg,
+                actorBorder: strokeColor,
+                actorTextColor: textCol,
+                actorLineColor: strokeColor,
+                signalColor: strokeColor,
+                signalTextColor: textCol,
+                
+                // Class diagram
+                classText: textCol,
+                
+                // State diagram  
+                labelBoxBkgColor: fillBg,
+                labelBoxBorderColor: strokeColor,
+                labelTextColor: textCol,
+                
+                // ER diagram
+                attributeBackgroundColorOdd: fillBg,
+                attributeBackgroundColorEven: fillBg
+              },
+              themeCSS
+            });
+
+            const preview=document.getElementById('preview');
+            preview.innerHTML='';
+            const { svg } = await mermaid.render('mermaid-diagram', this.mermaidCode);
+            preview.innerHTML=svg;
+
+            // FORCER la police et la taille sur TOUS les éléments texte
+            const svgEl=preview.querySelector('svg');
+            if(svgEl){ 
+              svgEl.style.fontFamily=this.fontFamily; 
+              svgEl.style.fontSize=this.fontSize+'px';
+              
+              // Forcer sur tous les éléments texte
+              svgEl.querySelectorAll('text, tspan, .nodeLabel, .edgeLabel, .label, .messageText, .noteText, .actor text, .labelText, .titleText, .classText, .stateText, .taskText').forEach(el => {
+                el.style.fontFamily = this.fontFamily;
+                el.style.fontSize = this.fontSize + 'px';
+              });
+            }
+            this.lastError='';
+          }catch(err){
+            this.lastError = err?.message || 'Erreur Mermaid';
+            document.getElementById('preview').innerHTML = `<div class="text-red-600 text-center py-8">❌ ${this.lastError}</div>`;
+          }
+        },
+
+        /* ---- Dictée ---- */
+        initSpeech(){
+          const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
+          if(!Rec) return;
+          
+          // Reconnaissance pour le prompt IA
+          this.recognition=new Rec(); 
+          this.recognition.continuous=true; 
+          this.recognition.interimResults=true; 
+          this.recognition.lang='fr-FR';
+          this.recognition.onresult=(e)=>{ 
+            for(let i=e.resultIndex;i<e.results.length;i++){ 
+              const t=e.results[i][0].transcript; 
+              if(e.results[i].isFinal) this.prompt=(this.prompt.trim()?this.prompt+' ':'')+t.trim(); 
+            } 
+          };
+          this.recognition.onerror=()=>{ this.isRecording=false; }; 
+          this.recognition.onend=()=>{ this.isRecording=false; };
+          
+          // Reconnaissance pour les notes de réunion
+          this.notesRecognition=new Rec(); 
+          this.notesRecognition.continuous=true; 
+          this.notesRecognition.interimResults=true; 
+          this.notesRecognition.lang='fr-FR';
+          this.notesRecognition.onresult=(e)=>{ 
+            for(let i=e.resultIndex;i<e.results.length;i++){ 
+              const t=e.results[i][0].transcript; 
+              if(e.results[i].isFinal) {
+                this.currentProject.report.rawNotes=(this.currentProject.report.rawNotes.trim()?this.currentProject.report.rawNotes+' ':'')+t.trim();
+                this.saveProject();
+              }
+            } 
+          };
+          this.notesRecognition.onerror=()=>{ this.isRecordingNotes=false; }; 
+          this.notesRecognition.onend=()=>{ this.isRecordingNotes=false; };
+        },
+        toggleDictation(){ 
+          if(!this.recognition){ this.showToast('Dictée non supportée','error'); return; } 
+          this.isRecording?this.stopDictation():this.startDictation(); 
+        },
+        startDictation(){ 
+          try{ 
+            this.recognition.start(); 
+            this.isRecording=true; 
+            this.showToast('Dictée démarrée','success'); 
+          }catch(e){ 
+            this.showToast('Impossible de démarrer la dictée','error'); 
+          } 
+        },
+        stopDictation(){ 
+          try{ this.recognition.stop(); }catch(e){} 
+          this.isRecording=false; 
+          this.showToast('Dictée arrêtée','success'); 
+        },
+        
+        // Dictée pour les notes de réunion
+        toggleNoteDictation(){ 
+          if(!this.notesRecognition){ this.showToast('Dictée non supportée','error'); return; } 
+          this.isRecordingNotes?this.stopNoteDictation():this.startNoteDictation(); 
+        },
+        startNoteDictation(){ 
+          try{ 
+            this.notesRecognition.start(); 
+            this.isRecordingNotes=true; 
+            this.showToast('Dictée des notes démarrée','success'); 
+          }catch(e){ 
+            this.showToast('Impossible de démarrer la dictée','error'); 
+          } 
+        },
+        stopNoteDictation(){ 
+          try{ this.notesRecognition.stop(); }catch(e){} 
+          this.isRecordingNotes=false; 
+          this.showToast('Dictée des notes arrêtée','success'); 
+        },
+        
+        // Mise à jour du prompt avec le type de diagramme sélectionné
+        updatePromptWithType(){
+          if(!this.selectedDiagramType) return;
+          
+          const typeLabels = {
+            'flowchart': 'Flowchart',
+            'sequence': 'Sequence',
+            'class': 'Class',
+            'state': 'State',
+            'er': 'ER',
+            'gantt': 'Gantt',
+            'pie': 'Pie',
+            'gitgraph': 'GitGraph',
+            'journey': 'Journey'
+          };
+          
+          const typeLabel = typeLabels[this.selectedDiagramType] || this.selectedDiagramType;
+          
+          // Si le prompt est vide ou ne commence pas déjà par un type, ajouter le préfixe
+          if(!this.prompt.trim() || !this.prompt.match(/^(flowchart|sequence|class|state|er|gantt|pie|gitgraph|journey):/i)){
+            this.prompt = typeLabel + ': ' + this.prompt.trim();
+          } else {
+            // Remplacer le type existant
+            this.prompt = this.prompt.replace(/^(flowchart|sequence|class|state|er|gantt|pie|gitgraph|journey):/i, typeLabel + ':');
+          }
+        },
+
+        /* ---- Génération ---- */
+        async generate(){
+          if(!this.prompt.trim()){ this.showToast('Veuillez saisir un prompt','error'); return; }
+          this.loading=true;
+          try{
+            const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:this.prompt,engine:'mistral',model:this.selectedModel})});
+            const d=await r.json();
+            if(r.ok){ 
+              this.mermaidCode=d.mermaid; 
+              this.addToHistory(this.prompt);
+              this.renderMermaid(); 
+              this.showToast('Diagramme généré !','success'); 
+            }
+            else{ this.showToast(d.error||'Erreur lors de la génération','error'); }
+          }catch(e){ this.showToast('Erreur réseau','error'); }
+          finally{ this.loading=false; }
+        },
+
+        addToHistory(promptText){
+          if(!promptText || !promptText.trim()) return;
+          const text = promptText.trim();
+          // Éviter les doublons
+          this.promptHistory = this.promptHistory.filter(p => p !== text);
+          // Ajouter au début
+          this.promptHistory.unshift(text);
+          // Limiter à 10
+          if(this.promptHistory.length > 10) this.promptHistory = this.promptHistory.slice(0, 10);
+          this.saveToStorage();
+        },
+
+        loadFromHistory(promptText){
+          this.prompt = promptText;
+          this.showToast('Prompt chargé depuis l\'historique','success');
+        },
+
+        clearHistory(){
+          if(confirm('Voulez-vous vraiment effacer tout l\'historique ?')){
+            this.promptHistory = [];
+            this.saveToStorage();
+            this.showToast('Historique effacé','success');
+          }
+        },
+
+        loadDemoByType(type){
+          const demoExamples = {
+            flowchart: `flowchart LR
+  A[Arrivée patient] --> B{Urgence ?}
+  B -- Oui --> C((Triage prioritaire))
+  B -. Non .-> D[Accueil standard]
+  C ==> E[Consultation]
+  D --> E`,
+            sequence: `sequenceDiagram
+  autonumber
+  participant P as Patient
+  participant I as Infirmier
+  participant M as Médecin
+
+  P ->> I: Arrivée
+  I ->> M: Dossier
+  activate M
+  M -->> I: Instructions
+  deactivate M
+
+  Note over P,I: Accueil & triage
+
+  alt Urgent
+    I ->> M: Appel prioritaire
+  else Standard
+    I ->> P: Salle d'attente
+  end`,
+            class: `classDiagram
+  class Patient {
+    +id: string
+    +nom: string
+    +admettre()
+  }
+  class Dossier {
+    +id: string
+    +etat: string
+  }
+  Patient "1" -- "1" Dossier : possède
+  Dossier <|-- DossierUrgent : hérite`,
+            state: `stateDiagram-v2
+  [*] --> EnAttente
+  EnAttente --> EnCours: déclencher
+  EnCours --> Terminé: finir
+  state EnCours {
+    [*] --> Traitement
+    Traitement --> Validation
+    Validation --> [*]
+  }
+  Terminé --> [*]`,
+            er: `erDiagram
+  PATIENT ||--o{ DOSSIER : a
+  DOSSIER ||--o{ EXAMEN : contient
+  PATIENT {
+    string id PK
+    string nom
+  }
+  DOSSIER {
+    string id PK
+    string etat
+  }`,
+            gantt: `gantt
+  title Parcours patient
+  dateFormat  YYYY-MM-DD
+  section Accueil
+  Admission       :a1, 2025-04-01, 1d
+  Triage          :after a1, 1d
+  section Soins
+  Examens         :crit, 2d
+  Diagnostic      :1d`,
+            pie: `pie showData
+  title Répartition des actes médicaux
+  "Consultations" : 45
+  "Examens" : 30
+  "Urgences" : 15
+  "Hospitalisations" : 10`,
+            gitgraph: `gitGraph
+  commit
+  branch develop
+  checkout develop
+  commit
+  commit
+  checkout main
+  merge develop
+  commit
+  branch feature
+  checkout feature
+  commit
+  checkout main
+  merge feature
+  commit`,
+            journey: `journey
+  title Parcours Patient
+  section Admission
+    Accueil: 5: Patient
+    Triage: 3: Infirmier
+    Dossier: 2: Système
+  section Consultation
+    Examen: 4: Médecin
+    Diagnostic: 3: Médecin
+    Traitement: 5: Équipe médicale
+  section Suivi
+    Sortie: 2: Infirmier
+    RDV Suivi: 1: Système`
+          };
+          
+          this.mermaidCode = demoExamples[type] || demoExamples.flowchart;
+          this.renderMermaid(); 
+          this.showToast('Démo chargée !','success');
+        },
+
+        /* ---- Export fiable (toBlob) ---- */
+        exportSvg(){
+          const svg=document.querySelector('#preview svg');
+          if(!svg){ this.showToast('Aucun diagramme à exporter','error'); return; }
+          const data=new XMLSerializer().serializeToString(svg);
+          const blob=new Blob([data],{type:'image/svg+xml'});
+          const url=URL.createObjectURL(blob);
+          const a=document.createElement('a'); a.href=url; a.download='diagram.svg';
+          document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+          this.showToast('SVG téléchargé','success');
+        },
+        async exportPng(scale=2){ await this.exportRaster('image/png','png',scale,1); },
+        async exportJpeg(scale=2,quality=.92){ await this.exportRaster('image/jpeg','jpg',scale,quality); },
+
+        async exportRaster(mime,ext,scale,quality){
+          const svg=document.querySelector('#preview svg');
+          if(!svg){ this.showToast('Aucun diagramme à exporter','error'); return; }
+
+          try{
+            // Attendre que toutes les polices soient chargées
+            if(document.fonts && document.fonts.ready){ 
+              await document.fonts.ready; 
+              // Petit délai supplémentaire pour sécuriser le rendu
+              await new Promise(resolve => setTimeout(resolve, 100));
+            }
+          }catch(e){ console.warn('Font loading timeout:', e); }
+
+          // Utiliser html2canvas ou une approche différente pour éviter CORS
+          // On va dessiner directement le SVG sans passer par une image intermédiaire
+          
+          let w, h;
+          const vb = svg.getAttribute('viewBox');
+          if(vb){ 
+            const p = vb.trim().split(/\s+/).map(Number); 
+            w = p[2]; h = p[3]; 
+          } else { 
+            const bbox = svg.getBBox(); 
+            w = bbox.width; h = bbox.height; 
+          }
+          w = Math.max(1, Math.floor(w));
+          h = Math.max(1, Math.floor(h));
+
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(w * scale);
+          canvas.height = Math.round(h * scale);
+          const ctx = canvas.getContext('2d');
+
+          // Fond blanc pour JPEG
+          if(mime === 'image/jpeg'){
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+
+          // Cloner et préparer le SVG
+          const clone = svg.cloneNode(true);
+          if(!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+          clone.setAttribute('width', w);
+          clone.setAttribute('height', h);
+          
+          // Forcer la police
+          clone.style.fontFamily = this.fontFamily;
+          clone.style.fontSize = this.fontSize + 'px';
+
+          const svgStr = new XMLSerializer().serializeToString(clone);
+          
+          // CORRECTION CRITIQUE : Utiliser data URL au lieu de blob URL pour éviter CORS
+          const svgBase64 = btoa(unescape(encodeURIComponent(svgStr)));
+          const url = `data:image/svg+xml;base64,${svgBase64}`;
+
+          const img = new Image();
+          img.onload = () => {
+            ctx.setTransform(scale, 0, 0, scale, 0, 0);
+            ctx.drawImage(img,0,0,w,h);
+
+            canvas.toBlob((blob)=>{
+              const outUrl=URL.createObjectURL(blob);
+              const a=document.createElement('a'); a.href=outUrl; a.download=`diagram.${ext}`;
+              document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(outUrl);
+              URL.revokeObjectURL(url);
+              this.showToast(`${ext.toUpperCase()} téléchargé`,'success');
+            }, mime, quality);
+          };
+          img.onerror=()=>{ URL.revokeObjectURL(url); this.showToast('Erreur export','error'); };
+          img.src=url;
+        },
+        
+        showToast(msg,type='success'){ const t=document.getElementById('toast'); t.textContent=msg; t.className=`neo-toast ${type} show`; setTimeout(()=>{ t.className=`neo-toast ${type}`; },2400); },
+        
+        // Commandes WYSIWYG pour l'éditeur
+        execCommand(command, value = null){
+          document.execCommand(command, false, value);
+          document.getElementById('wysiwyg-editor')?.focus();
+        },
+        
+        clearFormatting(){
+          document.execCommand('removeFormat', false, null);
+          document.getElementById('report-editor')?.focus();
+        },
+        
+        // Forcer la mise à jour de l'ordre PDF pour les projets existants
+        updatePdfOrder(){
+          // Mettre à jour l'ordre pour le projet actuel
+          this.currentProject.pdfConfig.order = ['report', 'images', 'diagram'];
+          this.saveProject();
+          this.showToast('Ordre PDF mis à jour : Compte rendu en premier !', 'success');
+        },
+        
+        // Copier le compte rendu vers le diagramme Mermaid
+        copyReportToDiagram(){
+          if(!this.currentProject.report.generated){
+            this.showToast('Aucun compte rendu à copier', 'error');
+            return;
+          }
+          
+          // Extraire le texte brut du HTML
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = this.currentProject.report.generated;
+          const plainText = tempDiv.textContent || tempDiv.innerText || '';
+          
+          // Créer un prompt Mermaid basé sur le contenu du CR
+          const mermaidPrompt = `Flowchart: Créer un diagramme de flux basé sur ce compte rendu:\n\n${plainText.substring(0, 500)}${plainText.length > 500 ? '...' : ''}`;
+          
+          // Mettre à jour le prompt et générer automatiquement
+          this.prompt = mermaidPrompt;
+          this.addToHistory(this.prompt);
+          
+          // Basculer vers l'onglet diagramme
+          this.activeTab = 'diagram';
+          
+          // Générer automatiquement le diagramme
+          setTimeout(() => {
+            this.generateDiagram();
+          }, 100);
+          
+          this.showToast('Compte rendu copié vers le diagramme !', 'success');
+        },
+        
+        // Gestion du logo
+        async uploadLogo(event){
+          const file = event.target.files?.[0];
+          if(!file) return;
+          
+          if(!file.type.match(/^image\/(jpeg|png)$/)){
+            this.showToast('Format non supporté (JPEG/PNG uniquement)', 'error');
+            return;
+          }
+          
+          if(file.size > 1 * 1024 * 1024){
+            this.showToast('Logo trop lourd (max 1 Mo)', 'error');
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.currentProject.pdfConfig.logo = e.target.result;
+            this.saveProject();
+            this.showToast('Logo ajouté', 'success');
+          };
+          reader.readAsDataURL(file);
+          
+          // Réinitialiser l'input pour permettre de recharger le même fichier
+          event.target.value = '';
+        },
+        
+        async setDefaultLogo(){
+          // Charger le logo Enovacom depuis le serveur et le convertir en base64
+          try {
+            const response = await fetch(this.defaultLogoUrl);
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.currentProject.pdfConfig.logo = e.target.result;
+              this.showToast('Logo Enovacom ajouté', 'success');
+            };
+            reader.readAsDataURL(blob);
+          } catch(e){
+            this.showToast('Erreur chargement logo', 'error');
+          }
+        },
+        
+        // Initialiser Quill
+        initTinyMCE(){
+          const self = this;
+          
+          const initEditor = () => {
+            if(!window.Quill){
+              setTimeout(initEditor, 100);
+              return;
+            }
+            
+            const hasBetter = !!(window.QuillBetterTable && (window.QuillBetterTable.default || window.QuillBetterTable));
+            if(hasBetter){
+              try {
+                const Better = window.QuillBetterTable.default || window.QuillBetterTable;
+                Quill.register('modules/better-table', Better);
+              } catch(e){ console.warn('BetterTable register failed:', e); }
+            }
+            
+            const modules = {
+              toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                ['link'],
+                ['clean']
+              ]
+            };
+            if(hasBetter){
+              modules.toolbar.push([{ 'table': 'TD' }]);
+              modules['better-table'] = {
+                operationMenu: { items: { unmergeCells: { text: 'Séparer les cellules' } } }
+              };
+              modules.keyboard = { bindings: (window.QuillBetterTable && window.QuillBetterTable.keyboardBindings) || {} };
+            }
+            
+            self.quillEditor = new Quill('#quill-editor', {
+              theme: 'snow',
+              modules,
+              placeholder: 'Le compte rendu généré apparaîtra ici...'
+            });
+            
+            // Empêcher la perte de sélection lors des clics sur la toolbar (UX)
+            try {
+              const toolbarRoot = document.querySelector('#quill-holder .ql-toolbar');
+              if (toolbarRoot) {
+                const keepFocus = (e) => { e.preventDefault(); };
+                toolbarRoot.addEventListener('mousedown', keepFocus, true);
+                toolbarRoot.addEventListener('pointerdown', keepFocus, true);
+              }
+            } catch(e){ /* noop */ }
+
+            if(hasBetter){
+              try {
+                const toolbar = self.quillEditor.getModule('toolbar');
+                toolbar.addHandler('table', () => {
+                  const tableModule = self.quillEditor.getModule('better-table');
+                  if(tableModule && tableModule.insertTable){ tableModule.insertTable(3, 3); }
+                });
+              } catch(e){ /* noop */ }
+            }
+            
+            // Injecter le HTML existant si présent (import HTML -> Delta)
+            if(self.currentProject && self.currentProject.report && self.currentProject.report.generated){
+              try {
+                self.quillEditor.clipboard.dangerouslyPasteHTML(self.currentProject.report.generated);
+              } catch(e){
+                self.quillEditor.root.innerHTML = self.currentProject.report.generated;
+              }
+            }
+            
+            // Sauvegarde automatique (debounced pour éviter des freezes)
+            self.quillEditor.on('text-change', () => {
+              self.currentProject.report.generated = self.quillEditor.root.innerHTML;
+              self.debouncedSave();
+            });
+          };
+          
+          initEditor();
+        },
+        
+        // Copier le texte du rapport
+        copyReportText(){
+          if(this.quillEditor){
+            const text = this.quillEditor.getText();
+            navigator.clipboard.writeText(text);
+            this.showToast('Copié!', 'success');
+          }
+        },
+        
+        // Effacer le rapport
+        clearReport(){
+          if(confirm('Êtes-vous sûr de vouloir effacer le compte rendu ?')){
+            this.currentProject.report.generated = '';
+            if(this.quillEditor){
+              this.quillEditor.setContents([]);
+            }
+            this.saveProject();
+            this.showToast('Compte rendu effacé', 'success');
+          }
+        },
+        
+        // Convertir markdown en HTML pour l'éditeur (ancienne fonction, gardée pour compatibilité)
+        convertMarkdownToHTML(markdown){
+          if(!markdown) return '';
+          
+          let html = markdown;
+          
+          // Titres
+          html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+          html = html.replace(/^### (.+)$/gm, '<h3 class="brand-subtitle">$1</h3>');
+          
+          // Gras et italique
+          html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+          html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+          
+          // Listes à puces
+          html = html.replace(/^\* (.+)$/gm, '<li>$1</li>');
+          html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+          
+          // Listes numérotées  
+          html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+          
+          // Paragraphes
+          html = html.replace(/\n\n/g, '</p><p>');
+          html = '<p>' + html + '</p>';
+          
+          // Nettoyer les <p> vides
+          html = html.replace(/<p><\/p>/g, '');
+          html = html.replace(/<p>(<[uh][l123]>)/g, '$1');
+          html = html.replace(/(<\/[uh][l123]>)<\/p>/g, '$1');
+          
+          return html;
+        },
+
+        /* ---- Nouvelles fonctions Phase 1 ---- */
+        
+        // Génération de compte rendu
+        async generateReport(){
+          if(!this.currentProject.report.rawNotes.trim()){
+            this.showToast('Veuillez saisir des notes', 'error');
+            return;
+          }
+          
+          this.isGeneratingReport = true;
+          try {
+            const response = await fetch('/api/generate-report', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                notes: this.currentProject.report.rawNotes,
+                template: this.currentProject.report.template,
+                meta: this.currentProject.report.meta
+              })
+            });
+            
+            if(!response.ok){
+              const err = await response.json();
+              throw new Error(err.error || 'Erreur génération');
+            }
+            
+            const data = await response.json();
+            
+            // Résoudre l'instance Marked (compat global/UMD et versions)
+            const _mk = (window.marked && (window.marked.parse ? window.marked : (window.marked.marked ? window.marked.marked : null))) || null;
+            if(!_mk){
+              throw new Error('Marked non chargé');
+            }
+            // Configurer marked.js (si disponible sur cette version)
+            if(typeof _mk.setOptions === 'function'){
+              _mk.setOptions({
+                gfm: true,
+                breaks: true,
+                headerIds: false,
+                mangle: false
+              });
+            }
+            // Convertir le markdown en HTML avec marked.js
+            const htmlContent = (typeof _mk.parse === 'function') ? _mk.parse(data.report) : _mk(data.report);
+            this.currentProject.report.generated = htmlContent;
+            // Mettre à jour l'éditeur Quill si déjà initialisé
+            if(this.quillEditor){
+              try {
+                this.quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
+              } catch(e){
+                this.quillEditor.root.innerHTML = htmlContent;
+              }
+            }
+            
+            console.log('✅ HTML généré:', htmlContent.substring(0, 500));
+            
+            this.saveProject();
+            this.showToast('Compte rendu généré', 'success');
+          } catch(e){
+            this.showToast(e.message, 'error');
+          } finally {
+            this.isGeneratingReport = false;
+          }
+        },
+        
+        // Gestion des images
+
+        // ====== Outils d'édition ======
+        focusEditor(){
+          const el = document.getElementById('report-editor');
+          if(el){ el.focus(); }
+        },
+        format(cmd){
+          const el = document.getElementById('report-editor');
+          if(el){ 
+            el.focus();
+            // Petit délai pour s'assurer que le focus est bien établi
+            setTimeout(() => {
+              document.execCommand(cmd, false, null);
+              this.currentProject.report.generated = el.innerHTML;
+              this.saveProject();
+            }, 10);
+          }
+        },
+        setHeading(level){
+          const el = document.getElementById('report-editor');
+          if(el){ 
+            el.focus();
+            setTimeout(() => {
+              document.execCommand('formatBlock', false, 'H'+level);
+              this.currentProject.report.generated = el.innerHTML;
+              this.saveProject();
+            }, 10);
+          }
+        },
+        clearFormatting(){
+          const el = document.getElementById('report-editor');
+          if(el){ 
+            el.focus();
+            setTimeout(() => {
+              document.execCommand('removeFormat', false, null);
+              this.currentProject.report.generated = el.innerHTML;
+              this.saveProject();
+            }, 10);
+          }
+        },
+        undo(){
+          const el = document.getElementById('report-editor');
+          if(el){ 
+            el.focus();
+            document.execCommand('undo', false, null);
+          }
+        },
+        redo(){
+          const el = document.getElementById('report-editor');
+          if(el){ 
+            el.focus();
+            document.execCommand('redo', false, null);
+          }
+        },
+        insertTable(){
+          this.focusEditor();
+          const html = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Responsable</th>
+                  <th>Échéance</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>—</td><td>—</td><td>—</td><td>—</td>
+                </tr>
+              </tbody>
+            </table>`;
+          document.execCommand('insertHTML', false, html);
+          this.saveProject();
+        },
+        onEditorKeydown(e){
+          if((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z'){
+            e.preventDefault();
+            this.undo();
+          } else if((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))){
+            e.preventDefault();
+            this.redo();
+          }
+        },
+        async addImage(event){
+          const files = event.target.files || event.dataTransfer?.files;
+          if(!files || !files.length) return;
+          
+          for(let file of files){
+            if(!file.type.match(/^image\/(jpeg|png)$/)){
+              this.showToast('Format non supporté (JPEG/PNG uniquement)', 'error');
+              continue;
+            }
+            
+            if(file.size > 2 * 1024 * 1024){
+              this.showToast('Image trop lourde (max 2 Mo)', 'error');
+              continue;
+            }
+            
+            if(this.currentProject.images.length >= 10){
+              this.showToast('Maximum 10 images', 'error');
+              break;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.currentProject.images.push({
+                id: Date.now() + Math.random(),
+                name: file.name,
+                dataUrl: e.target.result,
+                caption: ''
+              });
+              this.saveProject();
+            };
+            reader.readAsDataURL(file);
+          }
+        },
+        
+        removeImage(id){
+          this.currentProject.images = this.currentProject.images.filter(img => img.id !== id);
+          this.saveProject();
+        },
+        
+        moveImageUp(idx){
+          if(idx > 0){
+            const temp = this.currentProject.images[idx];
+            this.currentProject.images[idx] = this.currentProject.images[idx - 1];
+            this.currentProject.images[idx - 1] = temp;
+            this.saveProject();
+          }
+        },
+        
+        moveImageDown(idx){
+          if(idx < this.currentProject.images.length - 1){
+            const temp = this.currentProject.images[idx];
+            this.currentProject.images[idx] = this.currentProject.images[idx + 1];
+            this.currentProject.images[idx + 1] = temp;
+            this.saveProject();
+          }
+        },
+        
+        // Génération PDF
+        async generatePDF(){
+          if(!this.currentProject.report.generated){
+            this.showToast('Aucun contenu à exporter', 'error');
+            return;
+          }
+          
+          this.isGeneratingPDF = true;
+          try {
+            // DIAGRAMME SUPPRIMÉ - L'utilisateur peut l'exporter manuellement et l'ajouter via Images
+            console.log('📊 Diagramme ignoré - Utilisez la section Images pour ajouter le diagramme');
+            
+            const response = await fetch('/api/generate-pdf', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ project: this.currentProject })
+            });
+            
+            if(!response.ok){
+              const err = await response.json();
+              throw new Error(err.error || 'Erreur génération PDF');
+            }
+            
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${this.currentProject.pdfConfig.title.replace(/\s+/g, '_')}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            
+            this.showToast('PDF téléchargé', 'success');
+          } catch(e){
+            this.showToast(e.message, 'error');
+          } finally {
+            this.isGeneratingPDF = false;
+          }
+        },
+        
+        // Génération DOCX (Word)
+        async generateDOCX(){
+          if(!this.currentProject.report.generated){
+            this.showToast('Aucun contenu à exporter', 'error');
+            return;
+          }
+          
+          this.isGeneratingDOCX = true;
+          try {
+            const response = await fetch('/api/generate-docx', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ project: this.currentProject })
+            });
+            
+            if(!response.ok){
+              const err = await response.json();
+              throw new Error(err.error || 'Erreur génération DOCX');
+            }
+            
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${this.currentProject.pdfConfig.title.replace(/\s+/g, '_')}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            
+            this.showToast('Document Word téléchargé', 'success');
+          } catch(e){
+            this.showToast(e.message, 'error');
+          } finally {
+            this.isGeneratingDOCX = false;
+          }
+        },
+        
+        // Sauvegarde projet
+        saveProject(){
+          try {
+            if(!this.currentProject.id){
+              this.currentProject.id = Date.now();
+              this.currentProject.createdAt = new Date().toISOString();
+            }
+            this.currentProject.updatedAt = new Date().toISOString();
+            
+            // Synchroniser le nom du projet avec le titre PDF
+            if(this.currentProject.pdfConfig.title && this.currentProject.pdfConfig.title !== 'Document'){
+              this.currentProject.name = this.currentProject.pdfConfig.title;
+            }
+            
+            const idx = this.projects.findIndex(p => p.id === this.currentProject.id);
+            if(idx >= 0){
+              this.projects[idx] = JSON.parse(JSON.stringify(this.currentProject));
+            } else {
+              this.projects.unshift(JSON.parse(JSON.stringify(this.currentProject)));
+            }
+            
+            // Limiter à 20 projets
+            if(this.projects.length > 20){
+              this.projects = this.projects.slice(0, 20);
+            }
+            
+            localStorage.setItem('smartreport_projects', JSON.stringify(this.projects));
+            try { localStorage.removeItem('pathway_projects'); } catch(e) {}
+          } catch(e){
+            console.error('Erreur sauvegarde:', e);
+          }
+        },
+        
+        loadProject(id){
+          const project = this.projects.find(p => p.id === id);
+          if(project){
+            this.currentProject = JSON.parse(JSON.stringify(project));
+            if(this.currentProject.diagram.mermaid){
+              this.mermaidCode = this.currentProject.diagram.mermaid;
+              this.renderMermaid();
+            }
+            
+            // Le contenu du rapport sera chargé automatiquement par x-html
+            
+            this.showToast('Projet chargé', 'success');
+          }
+        },
+        
+        deleteProject(id){
+          if(confirm('Supprimer ce projet ?')){
+            this.projects = this.projects.filter(p => p.id !== id);
+            localStorage.setItem('smartreport_projects', JSON.stringify(this.projects));
+            try { localStorage.removeItem('pathway_projects'); } catch(e) {}
+            this.showToast('Projet supprimé', 'success');
+          }
+        },
+        
+        clearAllProjects(){
+          if(confirm('⚠️ Voulez-vous vraiment effacer TOUT l\'historique des projets ?\n\nCette action est irréversible.')){
+            this.projects = [];
+            localStorage.setItem('smartreport_projects', JSON.stringify(this.projects));
+            try { localStorage.removeItem('pathway_projects'); } catch(e) {}
+            this.showToast('Historique effacé', 'success');
+          }
+        },
+        
+        newProject(){
+          this.currentProject = {
+            id: null,
+            name: '',
+            diagram: { mermaid: '', svg: '', include: true, position: 'before_report', title: 'Diagramme' },
+            report: { template: 'client_formel', rawNotes: '', generated: '', meta: { date: '', participants: '' } },
+            images: [],
+            pdfConfig: { 
+              logo: '', title: 'Document', client: '', subtitle: '', 
+              footer: '{page}/{pages} • {projet} • {date}', legal: 'ENOVACOM - Tous droits réservés', 
+              watermark: false, 
+              theme: { font: 'Inter', primary: '#0C4A45', margins: { top: 24, right: 18, bottom: 28, left: 18 } },
+              order: ['report', 'images', 'diagram']  // Diagramme à la fin par défaut
+            }
+          };
+          this.mermaidCode = '';
+          this.renderMermaid();
+        }
+      }
+    }
+  </script>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-12">
+    <div class="max-w-7xl mx-auto px-6 py-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-primary">© 2025 Enovacom</span>
+          <span>•</span>
+          <span>Tous droits réservés</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/mentions-legales" class="hover:text-primary transition-colors">Mentions légales</a>
+          <span>•</span>
+          <a href="/confidentialite" class="hover:text-primary transition-colors">Politique de confidentialité</a>
+          <span>•</span>
+          <a href="/conditions" class="hover:text-primary transition-colors">Conditions d'utilisation</a>
+          <span>•</span>
+          <a href="mailto:sebastien.voerman@enovacom.com" class="hover:text-primary transition-colors">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
