@@ -95,13 +95,38 @@ config = {
 
 SYSTEM_PROMPT = """Tu convertis une description FR/EN en code Mermaid v10 **valide**.
 Règles :
-- Détecte type pertinent : flowchart, sequence, class, state, er, gantt.
+- Détecte type pertinent : flowchart, sequence, class, state, er, gantt, architecture.
 - Réponds **UNIQUEMENT** par un bloc de code Mermaid (sans prose/commentaires).
 - Identifiants sûrs (A, A1, a-b, etc.).
 - Header YAML si pertinent :
 ---
 title: ...
----"""
+---
+
+**RÈGLES SPÉCIALES POUR TYPE "ARCHITECTURE" :**
+Si le prompt contient "Architecture:" ou décrit une architecture système/technique :
+- Utilise TOUJOURS : graph TB (top-bottom)
+- Organise en subgraphs avec titres descriptifs (ex: subgraph Client["💻 Client"], subgraph Server["🐍 Serveur"])
+- OBLIGATOIRE : Ajoute des couleurs avec style à la fin :
+  style NomSubgraph fill:#couleur
+  style NomNoeud fill:#couleur
+- IMPORTANT : NE JAMAIS utiliser color:#fff ou color:white - le texte DOIT rester noir/lisible
+- Utilise 4-6 couleurs différentes minimum (ex: #e8f5f4, #fff4e6, #f0f9ff, #fef3c7, #dbeafe, #e0e7ff)
+- Préfère des couleurs CLAIRES pour que le texte noir reste lisible
+- Ajoute des emojis dans les titres des subgraphs pour rendre le diagramme vivant
+- Utilise des labels descriptifs sur les flèches (ex: -->|HTTP POST|)
+Exemple architecture colorée :
+graph TB
+    subgraph Client["💻 Client"]
+        A[Interface]
+    end
+    subgraph Server["🐍 Serveur"]
+        B[API]
+    end
+    A -->|REST| B
+    style Client fill:#e8f5f4
+    style Server fill:#fff4e6
+    style B fill:#fef3c7"""
 
 # Prompts pour génération de comptes rendus
 REPORT_PROMPTS = {

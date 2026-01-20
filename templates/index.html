@@ -369,6 +369,7 @@
               <option value="">-- Sélectionnez un type (optionnel) --</option>
               <option value="flowchart">Flowchart (Organigramme)</option>
               <option value="sequence">Sequence (Diagramme de séquence)</option>
+              <option value="architecture">Architecture Système</option>
               <option value="class">Class (Diagramme de classes)</option>
               <option value="state">State (Diagramme d'états)</option>
               <option value="er">ER Diagram (Entité-Relation)</option>
@@ -2083,6 +2084,7 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           const typeLabels = {
             'flowchart': 'Flowchart',
             'sequence': 'Sequence',
+            'architecture': 'Architecture',
             'class': 'Class',
             'state': 'State',
             'er': 'ER',
@@ -2095,11 +2097,11 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           const typeLabel = typeLabels[this.selectedDiagramType] || this.selectedDiagramType;
           
           // Si le prompt est vide ou ne commence pas déjà par un type, ajouter le préfixe
-          if(!this.prompt.trim() || !this.prompt.match(/^(flowchart|sequence|class|state|er|gantt|pie|gitgraph|journey):/i)){
+          if(!this.prompt.trim() || !this.prompt.match(/^(flowchart|sequence|architecture|class|state|er|gantt|pie|gitgraph|journey):/i)){
             this.prompt = typeLabel + ': ' + this.prompt.trim();
           } else {
             // Remplacer le type existant
-            this.prompt = this.prompt.replace(/^(flowchart|sequence|class|state|er|gantt|pie|gitgraph|journey):/i, typeLabel + ':');
+            this.prompt = this.prompt.replace(/^(flowchart|sequence|architecture|class|state|er|gantt|pie|gitgraph|journey):/i, typeLabel + ':');
           }
         },
 
@@ -2173,6 +2175,49 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
   else Standard
     I ->> P: Salle d'attente
   end`,
+            architecture: `graph TB
+    subgraph Client["💻 Client (Navigateur)"]
+        UI[Interface Alpine.js]
+        Mermaid[Mermaid.js Renderer]
+        Speech[Web Speech API]
+        Storage[(localStorage<br/>Projets)]
+    end
+    
+    subgraph Server["🐍 Serveur Flask"]
+        Router[Router API]
+        AIOrchestrator[Orchestrateur IA]
+        PDFGen[Générateur PDF<br/>ReportLab]
+        DOCXGen[Générateur DOCX<br/>python-docx]
+    end
+    
+    subgraph AI["🤖 Providers IA"]
+        Mistral[Mistral AI<br/>🇫🇷 France]
+        OpenAI[OpenAI<br/>🇺🇸 USA]
+        Ollama[Ollama<br/>💻 Local]
+    end
+    
+    UI -->|REST API| Router
+    Speech -->|Transcription| UI
+    Mermaid -->|SVG Render| UI
+    UI <-->|CRUD| Storage
+    
+    Router --> AIOrchestrator
+    Router --> PDFGen
+    Router --> DOCXGen
+    
+    AIOrchestrator -->|HTTP POST| Mistral
+    AIOrchestrator -->|HTTP POST| OpenAI
+    AIOrchestrator -->|HTTP POST| Ollama
+    
+    PDFGen -->|Fichier| Download[📥 Export]
+    DOCXGen -->|Fichier| Download
+    
+    style Client fill:#e8f5f4
+    style Server fill:#fff4e6
+    style AI fill:#f0f9ff
+    style Mistral fill:#ff7000
+    style OpenAI fill:#10b981
+    style Ollama fill:#059669`,
             class: `classDiagram
   class Patient {
     +id: string
