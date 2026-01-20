@@ -13,6 +13,7 @@ env/
 ENV/
 
 # IDE
+.windsurf/
 .vscode/
 .idea/
 *.swp
@@ -25,3 +26,20 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Dossiers de développement et fichiers internes (ne pas partager)
+TEMP/
+_dev/
+_bmad/
+_bmad-output/
+
+# Fichiers de travail et audits (ne pas partager sur GitHub)
+UX_FIXES.md
+AUDIT_*.md
+ISSUES.md
+TODO.md
+NOTES.md
+PLAN.md
+
+# Documentation (commenté car docs/ peut être utile)
+# docs/

@@ -42,25 +42,25 @@
     *{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
     body{background:linear-gradient(180deg,#fafafa 0%,#f3f4f6 100%);color:var(--text);-webkit-font-smoothing:antialiased}
     .modern-header{background:var(--surface);border-bottom:1px solid var(--surface-border);backdrop-filter:blur(10px);box-shadow:var(--shadow-s)}
-    .brand-name{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.9rem;line-height:1;color:var(--primary);text-transform:lowercase;letter-spacing:-.02em}
-    .brand-product{font-weight:600;font-size:1.15rem;line-height:1.1;color:#111827;margin-left:.45rem;margin-bottom:.08rem}
-    .brand-tagline{font-weight:500;font-size:.95rem;line-height:1.1;color:var(--text-2);margin-left:.85rem;padding-left:.85rem;border-left:2px solid var(--surface-border);margin-bottom:.08rem}
+    .brand-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.25rem;line-height:1;color:var(--primary);text-transform:lowercase;letter-spacing:-.02em}
+    .brand-product{font-weight:600;font-size:0.95rem;line-height:1.1;color:#111827;margin-left:.25rem;margin-bottom:.08rem}
+    .brand-tagline{font-weight:500;font-size:.75rem;line-height:1.1;color:var(--text-2);margin-left:.5rem;padding-left:.5rem;border-left:2px solid var(--surface-border);margin-bottom:.08rem}
     .brand-subtitle{font-family:'Poppins',sans-serif;font-weight:700;color:var(--primary)}
 
     .neo-card{background:var(--surface);border:1px solid var(--surface-border);border-radius:var(--r-lg);box-shadow:var(--shadow-s);transition:transform .15s ease}
     .neo-card:hover{transform:translateY(-1px)}
-    .neo-card-header{padding:1.1rem 1.1rem 0 1.1rem;border-bottom:1px solid var(--surface-border);margin-bottom:1.1rem}
-    .section-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:var(--primary)}
+    .neo-card-header{padding:.75rem 1rem 0 1rem;border-bottom:1px solid var(--surface-border);margin-bottom:.75rem}
+    .section-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:.95rem;color:#6b7280}
 
-    .neo-input{width:100%;padding:.8rem 1rem;border:1.5px solid var(--surface-border);border-radius:12px;background:var(--surface);font-weight:500}
+    .neo-input{width:100%;padding:.5rem .75rem;border:1.5px solid var(--surface-border);border-radius:8px;background:var(--surface);font-weight:500;font-size:.875rem}
     .neo-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(12,74,69,.12);outline:0}
-    .neo-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;background-size:1rem;padding-right:2.5rem}
+    .neo-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;background-size:.875rem;padding-right:2rem}
 
-    .neo-btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 1rem;border-radius:12px;border:1px solid var(--surface-border);background:var(--surface-elevated);cursor:pointer}
+    .neo-btn{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 .75rem;border-radius:12px;border:1px solid var(--surface-border);background:var(--surface-elevated);cursor:pointer;font-size:.875rem}
     .neo-btn:hover{background:#fff;box-shadow:var(--shadow-s)}
     .neo-btn-primary{background:var(--primary);color:#fff;border:none}
     .neo-btn-primary:hover{background:var(--primary-light);box-shadow:var(--shadow-m)}
-    .neo-btn-icon{width:44px;padding:0}
+    .neo-btn-icon{width:36px;padding:0}
     .is-recording{background:rgba(242,101,80,.12);border-color:#f26950}
 
     .preview-container{background:var(--surface);border:1px solid var(--surface-border);border-radius:14px;min-height:400px;overflow:auto;padding:1rem}
@@ -88,70 +88,94 @@
       .sidebar{order:2}
       .main-content{order:1}
     }
+
+    /* Bouton Scroll to Top */
+    #scrollToTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 99;
+      width: 50px;
+      height: 50px;
+      border: none;
+      outline: none;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      border-radius: 50%;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+    }
+    #scrollToTop.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    #scrollToTop:hover {
+      background: var(--primary-light);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+
+    /* OPTIMISATIONS LAPTOP - Phase 1 UX Fixes */
+    .modern-header .max-w-7xl{padding-top:.75rem;padding-bottom:.75rem}
+    .modern-header .flex.items-center.gap-6{gap:1rem}
+    .modern-header .mt-4{margin-top:.5rem}
+    .modern-header .pt-4{padding-top:.5rem}
+    #editor-holder{max-height:75vh}
+    #editor-holder .sticky{padding:.375rem .5rem;gap:.375rem}
+    #editor-holder .neo-btn{height:30px;padding:0 .5rem;font-size:.8rem}
+    #editor-holder .h-6.w-px{height:1.25rem}
+    #report-editor{min-height:400px;padding:1rem;line-height:1.5;border:2px solid var(--primary);border-radius:8px;background:#fafafa}
+    #report-editor:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(12,74,69,.08)}
+    main .space-y-6>*+*{margin-top:1rem}
   </style>
 </head>
 <body class="min-h-screen">
   <div id="toast" class="neo-toast"></div>
+  
+  <!-- Bouton Scroll to Top -->
+  <button id="scrollToTop" @click="scrollToTop()" title="Remonter en haut" aria-label="Remonter en haut">
+    ↑
+  </button>
 
   <!-- Header -->
   <header class="modern-header sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex items-center justify-between">
+        <!-- Titre à gauche -->
         <div class="flex items-end">
           <span class="brand-name">enovacom</span>
           <span class="brand-product">SmartReport</span>
           <span class="brand-tagline">Notez. Validez. Envoyez.</span>
         </div>
-        <div class="flex items-center gap-3">
-          <div x-data="{showDiagramMenu: false}" class="relative">
-            <button @click="showDiagramMenu = !showDiagramMenu" class="neo-btn" title="Choisir un type de diagramme">
-              Démo Diagramme
+        <!-- Modèle + Boutons à droite -->
+        <div class="flex items-center gap-2">
+          <!-- Modèle déplacé à droite -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-semibold">Modèle</label>
+            <div x-show="loadingModels" class="text-xs text-gray-600">Chargement…</div>
+            <select x-show="!loadingModels && models && models.length" x-model="selectedModel" class="neo-input neo-select" style="padding:.35rem .5rem;font-size:.75rem;min-width:180px;max-width:200px" title="Modèle Mistral">
+              <template x-for="(model, index) in models" :key="index">
+                <option :value="model" x-text="model"></option>
+              </template>
+            </select>
+            <button x-show="!loadingModels" @click="loadModels()" class="neo-btn neo-btn-icon" style="width:28px;height:28px" title="Recharger les modèles">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 2v6h-6" />
+                <path d="M3 22v-6h6" />
+                <path d="M3.5 9a9 9 0 0 1 14.1-3.4L21 8" />
+                <path d="M20.5 15a9 9 0 0 1-14.1 3.4L3 16" />
+              </svg>
             </button>
-            <div x-show="showDiagramMenu" @click.away="showDiagramMenu = false" x-cloak class="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-xl p-2 z-50 min-w-[220px]">
-              <button @click="loadDemoByType('flowchart'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Flowchart</button>
-              <button @click="loadDemoByType('sequence'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Sequence</button>
-              <button @click="loadDemoByType('class'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Class</button>
-              <button @click="loadDemoByType('state'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">State</button>
-              <button @click="loadDemoByType('er'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">ER Diagram</button>
-              <button @click="loadDemoByType('gantt'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Gantt</button>
-              <button @click="loadDemoByType('pie'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Pie Chart</button>
-              <button @click="loadDemoByType('gitgraph'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Git Graph</button>
-              <button @click="loadDemoByType('journey'); showDiagramMenu = false" class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors">Journey</button>
-            </div>
           </div>
+          <!-- Boutons -->
           <button @click="showSettings = true" class="neo-btn" title="Paramètres API">Paramètres</button>
           <button @click="showHelp = true" class="neo-btn" title="Aide Mermaid">Aide</button>
+          <button @click="resetAll()" class="neo-btn" style="background:var(--primary);color:white;border:none;padding:0 .5rem;font-size:.75rem" title="Réinitialiser tout">Reset</button>
         </div>
-      </div>
-
-      <!-- Choix du modèle -->
-      <div class="flex items-center gap-6 mt-4 pt-4 border-t border-gray-200">
-        <div class="flex items-center gap-3 flex-1">
-          <label class="font-semibold">Modèle</label>
-          <div x-show="loadingModels" class="text-gray-600">Chargement…</div>
-          <select x-show="!loadingModels && models && models.length" x-model="selectedModel" class="neo-input neo-select flex-1 max-w-md" title="Modèle Mistral">
-            <template x-for="(model, index) in models" :key="index">
-              <option :value="model" x-text="model"></option>
-            </template>
-          </select>
-          <div x-show="!loadingModels && (!models || !models.length)" class="text-sm text-red-600">Aucun modèle</div>
-        </div>
-        <!-- Refresh button -->
-        <button x-show="!loadingModels" @click="loadModels()" class="neo-btn neo-btn-icon" title="Recharger les modèles" aria-label="Recharger les modèles">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 2v6h-6" />
-            <path d="M3 22v-6h6" />
-            <path d="M3.5 9a9 9 0 0 1 14.1-3.4L21 8" />
-            <path d="M20.5 15a9 9 0 0 1-14.1 3.4L3 16" />
-          </svg>
-        </button>
-        <!-- Loading spinner while fetching models -->
-        <button x-show="loadingModels" disabled class="neo-btn neo-btn-icon" title="Chargement…" aria-busy="true">
-          <svg class="w-5 h-5 animate-spin text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="9" stroke-opacity="0.25" />
-            <path d="M21 12a9 9 0 0 1-9 9" />
-          </svg>
-        </button>
       </div>
     </div>
   </header>
@@ -171,9 +195,48 @@
             <div>
               <label class="block text-sm font-semibold mb-1">Template</label>
               <select x-model="currentProject.report.template" class="neo-input neo-select">
-                <template x-for="tpl in reportTemplates" :key="tpl.id">
-                  <option :value="tpl.id" x-text="tpl.name"></option>
-                </template>
+                <!-- Général -->
+                <optgroup label="📋 Général">
+                  <template x-for="tpl in reportTemplates.filter(t => t.category === 'general')" :key="tpl.id">
+                    <option :value="tpl.id" x-text="tpl.name"></option>
+                  </template>
+                </optgroup>
+                <!-- Commercial -->
+                <optgroup label="🤝 Commercial">
+                  <template x-for="tpl in reportTemplates.filter(t => t.category === 'commercial')" :key="tpl.id">
+                    <option :value="tpl.id" x-text="tpl.name"></option>
+                  </template>
+                </optgroup>
+                <!-- Projets -->
+                <optgroup label="🚀 Projets & Déploiement">
+                  <template x-for="tpl in reportTemplates.filter(t => t.category === 'projets')" :key="tpl.id">
+                    <option :value="tpl.id" x-text="tpl.name"></option>
+                  </template>
+                </optgroup>
+                <!-- Support -->
+                <optgroup label="🛠️ Support & Maintenance">
+                  <template x-for="tpl in reportTemplates.filter(t => t.category === 'support')" :key="tpl.id">
+                    <option :value="tpl.id" x-text="tpl.name"></option>
+                  </template>
+                </optgroup>
+                <!-- HPP Technique -->
+                <optgroup label="⚙️ HPP Technique">
+                  <template x-for="tpl in reportTemplates.filter(t => t.category === 'hpp')" :key="tpl.id">
+                    <option :value="tpl.id" x-text="tpl.name"></option>
+                  </template>
+                </optgroup>
+                <!-- Technique Santé -->
+                <optgroup label="🏥 Technique Santé">
+                  <template x-for="tpl in reportTemplates.filter(t => t.category === 'technique_sante')" :key="tpl.id">
+                    <option :value="tpl.id" x-text="tpl.name"></option>
+                  </template>
+                </optgroup>
+                <!-- Utilitaires -->
+                <optgroup label="🔧 Utilitaires">
+                  <template x-for="tpl in reportTemplates.filter(t => t.category === 'utilitaire')" :key="tpl.id">
+                    <option :value="tpl.id" x-text="tpl.name"></option>
+                  </template>
+                </optgroup>
               </select>
             </div>
             <div>
@@ -220,6 +283,20 @@
                   <button type="button" class="neo-btn" @mousedown.prevent="format('underline')"><u>U</u></button>
                   <button type="button" class="neo-btn" @mousedown.prevent="format('strikeThrough')"><s>S</s></button>
                   <div class="h-6 w-px bg-gray-300 mx-1"></div>
+                  <!-- Couleurs - Version boutons cliquables -->
+                  <div class="relative inline-block">
+                    <button type="button" class="neo-btn flex items-center gap-1" @click="$refs.textColorPicker.click()" title="Couleur du texte">
+                      🎨 <span class="text-xs">Texte</span>
+                    </button>
+                    <input type="color" x-ref="textColorPicker" @input="setTextColor($event.target.value)" value="#000000" class="absolute opacity-0 w-0 h-0">
+                  </div>
+                  <div class="relative inline-block">
+                    <button type="button" class="neo-btn flex items-center gap-1" @click="$refs.highlightColorPicker.click()" title="Surligner le texte">
+                      ✨ <span class="text-xs">Surligneur</span>
+                    </button>
+                    <input type="color" x-ref="highlightColorPicker" @input="setHighlightColor($event.target.value)" value="#ffff00" class="absolute opacity-0 w-0 h-0">
+                  </div>
+                  <div class="h-6 w-px bg-gray-300 mx-1"></div>
                   <button type="button" class="neo-btn" @mousedown.prevent="setHeading(1)">H1</button>
                   <button type="button" class="neo-btn" @mousedown.prevent="setHeading(2)">H2</button>
                   <button type="button" class="neo-btn" @mousedown.prevent="setHeading(3)">H3</button>
@@ -227,28 +304,28 @@
                   <button type="button" class="neo-btn" @mousedown.prevent="setHeading(5)">H5</button>
                   <button type="button" class="neo-btn" @mousedown.prevent="setHeading(6)">H6</button>
                   <div class="h-6 w-px bg-gray-300 mx-1"></div>
-                  <button type="button" class="neo-btn" @mousedown.prevent="format('insertUnorderedList')">• Liste</button>
-                  <button type="button" class="neo-btn" @mousedown.prevent="format('insertOrderedList')">1. Liste</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="insertList('ul')">• Liste</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="insertList('ol')">1. Liste</button>
                   <div class="h-6 w-px bg-gray-300 mx-1"></div>
-                  <button type="button" class="neo-btn" @mousedown.prevent="format('justifyLeft')">↤</button>
-                  <button type="button" class="neo-btn" @mousedown.prevent="format('justifyCenter')">↔</button>
-                  <button type="button" class="neo-btn" @mousedown.prevent="format('justifyRight')">↦</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="insertLink()" title="Insérer un lien (Ctrl+K)">🔗 Lien</button>
+                  <button type="button" class="neo-btn" @mousedown.prevent="insertTable()" title="Insérer un tableau">↹ Tableau</button>
                   <div class="h-6 w-px bg-gray-300 mx-1"></div>
-                  <button type="button" class="neo-btn" @mousedown.prevent="undo()">↶ Annuler</button>
-                  <button type="button" class="neo-btn" @mousedown.prevent="redo()">↷ Rétablir</button>
+                  <button type="button" class="neo-btn" :disabled="editorHistoryIndex <= 0" @mousedown.prevent="editorUndo()" title="Annuler (Ctrl+Z)">↶ Annuler</button>
+                  <button type="button" class="neo-btn" :disabled="editorHistoryIndex >= editorHistory.length - 1" @mousedown.prevent="editorRedo()" title="Rétablir (Ctrl+Y)">↷ Rétablir</button>
                   <div class="h-6 w-px bg-gray-300 mx-1"></div>
-                  <button type="button" class="neo-btn" @mousedown.prevent="insertTable()">↹ Tableau</button>
                   <button type="button" class="neo-btn" @mousedown.prevent="clearFormatting()">Effacer formatage</button>
+                  <span class="text-xs text-gray-500 ml-2" x-text="getWordCount() + ' mots'"></span>
                 </div>
                 <!-- Éditeur -->
                 <div 
                   id="report-editor"
                   contenteditable="true"
-                  @input="currentProject.report.generated = $event.target.innerHTML; debouncedSave()"
+                  @input="onEditorInput($event)"
                   @keydown="onEditorKeydown($event)"
-                  x-init="$el.innerHTML = currentProject.report.generated"
-                  x-effect="if(!document.activeElement || document.activeElement !== $el) { $el.innerHTML = currentProject.report.generated }"
-                  class="min-h-[300px] p-4"
+                  @mouseup="updateToolbarState()"
+                  @keyup="updateToolbarState()"
+                  x-init="initEditor($el)"
+                  class="min-h-[300px] p-4 focus:outline-none"
                   style="white-space: pre-wrap; line-height: 1.6;"
                 ></div>
               </div>
@@ -343,12 +420,12 @@
       </section>
 
         <!-- Toolbar ligne 1 : Thème + Couleurs -->
-        <section class="bg-white/60 border border-gray-200 rounded-2xl p-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+        <section class="bg-white/60 border border-gray-200 rounded-2xl p-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-3">
             <!-- Thème -->
             <div>
-              <label class="font-semibold block mb-1 text-sm">Thème</label>
-              <select x-model="theme" @change="applyTheme()" class="neo-input neo-select" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;">
+              <label class="font-semibold block mb-1 text-xs">Thème</label>
+              <select x-model="theme" @change="applyTheme()" class="neo-input neo-select" style="padding: 0.35rem 0.5rem; font-size: 0.75rem;">
                 <optgroup label="Professionnels">
                   <template x-for="t in availableThemes.filter(th => th.category === 'pro')" :key="t.id"><option :value="t.id" x-text="t.name"></option></template>
                 </optgroup>
@@ -375,11 +452,11 @@
 
             <!-- Couleur Bordure -->
             <div>
-              <label class="font-semibold block mb-1 text-sm">Bordure</label>
+              <label class="font-semibold block mb-1 text-xs">Bordure</label>
               <div class="flex items-center gap-2">
-                <input type="color" x-model="borderColor" @input="updateColors()" class="w-10 h-8 border border-gray-300 rounded cursor-pointer" title="Couleur bordure"/>
+                <input type="color" x-model="borderColor" @input="updateColors()" class="w-8 h-7 border border-gray-300 rounded cursor-pointer" title="Couleur bordure"/>
                 <div x-data="{open:false}" class="relative flex-1">
-                  <button type="button" @click="open=!open" class="neo-input neo-select w-full flex items-center justify-between" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
+                  <button type="button" @click="open=!open" class="neo-input neo-select w-full flex items-center justify-between" style="padding: 0.3rem 0.5rem; font-size: 0.7rem;">
                     <span class="inline-flex items-center gap-2">
                       <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${borderColor}`"></span>
                       <span x-text="borderColor"></span>
@@ -406,11 +483,11 @@
 
             <!-- Couleur Remplissage -->
             <div>
-              <label class="font-semibold block mb-1 text-sm">Remplissage</label>
+              <label class="font-semibold block mb-1 text-xs">Remplissage</label>
               <div class="flex items-center gap-2">
-                <input type="color" x-model="fillColor" @input="updateColors()" class="w-10 h-8 border border-gray-300 rounded cursor-pointer" title="Couleur remplissage"/>
+                <input type="color" x-model="fillColor" @input="updateColors()" class="w-8 h-7 border border-gray-300 rounded cursor-pointer" title="Couleur remplissage"/>
                 <div x-data="{open:false}" class="relative flex-1">
-                  <button type="button" @click="open=!open" class="neo-input neo-select w-full flex items-center justify-between" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
+                  <button type="button" @click="open=!open" class="neo-input neo-select w-full flex items-center justify-between" style="padding: 0.3rem 0.5rem; font-size: 0.7rem;">
                     <span class="inline-flex items-center gap-2">
                       <span class="inline-block w-4 h-4 rounded border border-gray-300" :style="`background:${fillColor}`"></span>
                       <span x-text="fillColor"></span>
@@ -469,12 +546,12 @@
         </section>
 
         <!-- Toolbar ligne 2 : Police et Taille -->
-        <section class="bg-white/60 border border-gray-200 rounded-2xl p-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section class="bg-white/60 border border-gray-200 rounded-2xl p-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <!-- Police -->
             <div>
-              <label class="font-semibold block mb-1 text-sm">Police</label>
-              <select x-model="fontFamily" @change="onFontChange()" class="neo-input neo-select font-preview-select" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;">
+              <label class="font-semibold block mb-1 text-xs">Police</label>
+              <select x-model="fontFamily" @change="onFontChange()" class="neo-input neo-select font-preview-select" style="padding: 0.35rem 0.5rem; font-size: 0.75rem;">
                 <optgroup label="Sans-serif modernes">
                   <option value="Inter, sans-serif" style="font-family: Inter, sans-serif;">Inter</option>
                   <option value="Roboto, sans-serif" style="font-family: Roboto, sans-serif;">Roboto</option>
@@ -534,23 +611,23 @@
 
             <!-- Taille Police -->
             <div>
-              <label class="font-semibold block mb-1 text-sm">Taille Police</label>
+              <label class="font-semibold block mb-1 text-xs">Taille Police</label>
               <div class="flex items-center gap-2">
-                <input type="range" x-model="fontSize" @input="onFontChange()" min="10" max="28" step="1" class="flex-1" title="Ajuster la taille de police" />
-                <span class="text-sm font-mono w-16 text-center font-semibold" x-text="fontSize + 'px'"></span>
+                <input type="range" x-model="fontSize" @input="onFontChange()" min="10" max="28" step="1" class="flex-1" style="height:24px" title="Ajuster la taille de police" />
+                <span class="text-xs font-mono w-12 text-center font-semibold" x-text="fontSize + 'px'"></span>
               </div>
             </div>
           </div>
         </section>
 
         <!-- Toolbar ligne 3 : Exports -->
-        <section class="bg-white/60 border border-gray-200 rounded-2xl p-4">
-          <div class="flex items-center gap-4">
-            <label class="brand-subtitle text-sm">Export</label>
+        <section class="bg-white/60 border border-gray-200 rounded-2xl p-3">
+          <div class="flex items-center gap-3">
+            <label class="brand-subtitle text-xs">Export</label>
             <div class="flex gap-2 flex-1">
-              <button @click="exportSvg()" class="export-tile flex-1" style="height: 48px; font-size: 0.9rem;" aria-label="Exporter en SVG" title="Exporter en SVG">SVG</button>
-              <button @click="exportPng()" class="export-tile flex-1" style="height: 48px; font-size: 0.9rem;" aria-label="Exporter en PNG (transparent)" title="Exporter en PNG">PNG</button>
-              <button @click="exportJpeg()" class="export-tile flex-1" style="height: 48px; font-size: 0.9rem;" aria-label="Exporter en JPEG" title="Exporter en JPEG">JPEG</button>
+              <button @click="exportSvg()" class="export-tile flex-1" style="height: 38px; font-size: 0.75rem;" aria-label="Exporter en SVG" title="Exporter en SVG">SVG</button>
+              <button @click="exportPng()" class="export-tile flex-1" style="height: 38px; font-size: 0.75rem;" aria-label="Exporter en PNG (transparent)" title="Exporter en PNG">PNG</button>
+              <button @click="exportJpeg()" class="export-tile flex-1" style="height: 38px; font-size: 0.75rem;" aria-label="Exporter en JPEG" title="Exporter en JPEG">JPEG</button>
             </div>
           </div>
         </section>
@@ -1162,14 +1239,79 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
         isGeneratingReport: false,
         isGeneratingPDF: false,
         isGeneratingDOCX: false,
-        quillEditor: null, // Instance de l'éditeur Quill
+        
+        // Système d'historique manuel pour undo/redo
+        editorHistory: [],
+        editorHistoryIndex: -1,
+        editorLastSavedState: '',
+        isRestoringHistory: false,
+        editorInputDebounceTimer: null,
         reportTemplates: [
-          { id: 'client_formel', name: 'Client (formel)' },
-          { id: 'sprint_agile', name: 'Sprint Agile' },
-          { id: 'brief_technique', name: 'Brief technique' },
-          { id: 'crm_echange', name: 'CRM Échange & Partage' }
+          // === CATÉGORIE : GÉNÉRAL ===
+          { id: 'client_formel', name: 'Réunion Client Formelle', category: 'general' },
+          { id: 'sprint_agile', name: 'Sprint Agile', category: 'general' },
+          { id: 'brief_technique', name: 'Atelier Technique', category: 'general' },
+          { id: 'mail_client', name: 'Mail Client', category: 'general' },
+          { id: 'reunion_avancement', name: 'Réunion d\'Avancement Projet', category: 'general' },
+          { id: 'note_service', name: 'Note de Service Interne', category: 'general' },
+          { id: 'ordre_jour', name: 'Ordre du Jour Réunion', category: 'general' },
+          
+          // === CATÉGORIE : COMMERCIAL ===
+          { id: 'crm_echange', name: 'Visite Commerciale', category: 'commercial' },
+          { id: 'reponse_ao', name: 'Réponse Appel d\'Offres', category: 'commercial' },
+          { id: 'demo_produit', name: 'Démonstration Produit', category: 'commercial' },
+          
+          // === CATÉGORIE : PROJETS ===
+          { id: 'cadrage_projet', name: 'Cahier de Cadrage Projet', category: 'projets' },
+          { id: 'recette_fonctionnelle', name: 'Recette Fonctionnelle', category: 'projets' },
+          { id: 'migration_systeme', name: 'Migration Système', category: 'projets' },
+          { id: 'formation_client', name: 'Formation Client', category: 'projets' },
+          { id: 'recette_utilisateur', name: 'Cahier de Recette Utilisateur', category: 'projets' },
+          { id: 'release_notes', name: 'Release Notes', category: 'projets' },
+          { id: 'cloture_projet', name: 'Rapport de Clôture Projet', category: 'projets' },
+          
+          // === CATÉGORIE : SUPPORT ===
+          { id: 'intervention_rapide', name: 'Intervention Support < 2h', category: 'support' },
+          { id: 'analyse_incident', name: 'Analyse d\'Incident Critique', category: 'support' },
+          { id: 'bilan_tma', name: 'Bilan Mensuel TMA', category: 'support' },
+          { id: 'rapport_exploitation', name: 'Rapport d\'Exploitation Mensuel', category: 'support' },
+          { id: 'fiche_risque', name: 'Fiche d\'Analyse de Risque', category: 'support' },
+          
+          // === CATÉGORIE : HPP TECHNIQUE ===
+          { id: 'hpp_audit', name: 'HPP - Audit', category: 'hpp' },
+          { id: 'hpp_intervention', name: 'HPP - Intervention', category: 'hpp' },
+          { id: 'hpp_installation', name: 'HPP - Installation', category: 'hpp' },
+          { id: 'hpp_fiche_ecart', name: 'HPP - Fiche Écart', category: 'hpp' },
+          { id: 'hpp_bip', name: 'HPP - Bilan Interne Projet (BIP)', category: 'hpp' },
+          { id: 'hpp_copil', name: 'HPP - Comité de Pilotage (COPIL)', category: 'hpp' },
+          { id: 'hpp_pmp', name: 'HPP - Plan Management Projet (PMP)', category: 'hpp' },
+          { id: 'hpp_rli_rlp', name: 'HPP - Réunion Lancement (RLI/RLC)', category: 'hpp' },
+          { id: 'hpp_rpo', name: 'HPP - Réunion Présentation Offre (RPO)', category: 'hpp' },
+          { id: 'hpp_cahier_tests', name: 'HPP - Cahier de Tests', category: 'hpp' },
+          { id: 'hpp_tdb_spot', name: 'HPP - Tableau de Bord SPOT', category: 'hpp' },
+          { id: 'hpp_mail_cloture', name: 'HPP - Mail de Clôture Projet', category: 'hpp' },
+          { id: 'hpp_delivery_classification', name: 'HPP - Classification Livrables', category: 'hpp' },
+          
+          // === CATÉGORIE : TECHNIQUE SANTÉ ===
+          { id: 'analyse_flux_hl7', name: 'Analyse Flux HL7/FHIR', category: 'technique_sante' },
+          { id: 'conformite_reglementaire', name: 'Conformité Réglementaire', category: 'technique_sante' },
+          { id: 'dat', name: 'Dossier d\'Architecture Technique (DAT)', category: 'technique_sante' },
+          { id: 'procedure_exploitation', name: 'Procédure d\'Exploitation', category: 'technique_sante' },
+          
+          // === CATÉGORIE : UTILITAIRES ===
+          { id: 'correction_orthographe', name: 'Correction Orthographe/Grammaire', category: 'utilitaire' }
         ],
-        defaultLogoUrl: '{{ url_for("static", filename="enovacom_logo.png") }}',
+        
+        templateCategories: {
+          general: { name: '📋 Général', order: 1 },
+          commercial: { name: '🤝 Commercial', order: 2 },
+          projets: { name: '🚀 Projets & Déploiement', order: 3 },
+          support: { name: '🛠️ Support & Maintenance', order: 4 },
+          hpp: { name: '⚙️ HPP Technique', order: 5 },
+          technique_sante: { name: '🏥 Technique Santé', order: 6 },
+          utilitaire: { name: '🔧 Utilitaires', order: 7 }
+        },
+        defaultLogoUrl: '{{ url_for("static", filename="enovacom_logo_square.png") }}',
 
         // Visuels - VALEURS PAR DÉFAUT (Enovacom + Poppins)
         theme:'enovacom',
@@ -1329,6 +1471,18 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           this.initSpeech();
           this.renderMermaid();
           document.addEventListener('keydown',(e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); this.generate(); }});
+          
+          // Gérer l'affichage du bouton scroll-to-top
+          window.addEventListener('scroll', () => {
+            const scrollBtn = document.getElementById('scrollToTop');
+            if(scrollBtn){
+              if(window.pageYOffset > 300){
+                scrollBtn.classList.add('show');
+              } else {
+                scrollBtn.classList.remove('show');
+              }
+            }
+          });
         },
 
         loadFromStorage(){
@@ -1363,6 +1517,29 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             if(projectsData) {
               try {
                 this.projects = JSON.parse(projectsData);
+                
+                // Migration automatique des anciens IDs de templates
+                const templateMigration = {
+                  'audit_technique': 'hpp_audit',
+                  'intervention_technique': 'hpp_intervention'
+                };
+                
+                let migrated = false;
+                this.projects.forEach(project => {
+                  if(project.report && project.report.template){
+                    const oldId = project.report.template;
+                    if(templateMigration[oldId]){
+                      project.report.template = templateMigration[oldId];
+                      migrated = true;
+                    }
+                  }
+                });
+                
+                // Sauvegarder si migration effectuée
+                if(migrated){
+                  localStorage.setItem('smartreport_projects', JSON.stringify(this.projects));
+                  console.log('✅ Templates migrés vers nouveaux IDs HPP');
+                }
               } catch(e) {
                 console.error('Erreur chargement projets:', e);
                 this.projects = [];
@@ -1806,8 +1983,25 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
               if(e.results[i].isFinal) this.prompt=(this.prompt.trim()?this.prompt+' ':'')+t.trim(); 
             } 
           };
-          this.recognition.onerror=()=>{ this.isRecording=false; }; 
-          this.recognition.onend=()=>{ this.isRecording=false; };
+          this.recognition.onerror=(event)=>{ 
+            console.error('Dictée prompt - Erreur:', event.error);
+            if(event.error==='no-speech'||event.error==='audio-capture'){
+              if(this.isRecording){
+                setTimeout(()=>{ try{ this.recognition.start(); }catch(e){} }, 100);
+              }
+            }else{
+              this.isRecording=false;
+              this.showToast(`Erreur dictée: ${event.error}`,'error');
+            }
+          }; 
+          this.recognition.onend=()=>{ 
+            if(this.isRecording){
+              try{ this.recognition.start(); }catch(e){ 
+                console.error('Redémarrage dictée échoué:', e);
+                this.isRecording=false;
+              }
+            }
+          };
           
           // Reconnaissance pour les notes de réunion
           this.notesRecognition=new Rec(); 
@@ -1823,8 +2017,25 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
               }
             } 
           };
-          this.notesRecognition.onerror=()=>{ this.isRecordingNotes=false; }; 
-          this.notesRecognition.onend=()=>{ this.isRecordingNotes=false; };
+          this.notesRecognition.onerror=(event)=>{ 
+            console.error('Dictée notes - Erreur:', event.error);
+            if(event.error==='no-speech'||event.error==='audio-capture'){
+              if(this.isRecordingNotes){
+                setTimeout(()=>{ try{ this.notesRecognition.start(); }catch(e){} }, 100);
+              }
+            }else{
+              this.isRecordingNotes=false;
+              this.showToast(`Erreur dictée notes: ${event.error}`,'error');
+            }
+          }; 
+          this.notesRecognition.onend=()=>{ 
+            if(this.isRecordingNotes){
+              try{ this.notesRecognition.start(); }catch(e){ 
+                console.error('Redémarrage dictée notes échoué:', e);
+                this.isRecordingNotes=false;
+              }
+            }
+          };
         },
         toggleDictation(){ 
           if(!this.recognition){ this.showToast('Dictée non supportée','error'); return; } 
@@ -2225,108 +2436,6 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           }
         },
         
-        // Initialiser Quill
-        initTinyMCE(){
-          const self = this;
-          
-          const initEditor = () => {
-            if(!window.Quill){
-              setTimeout(initEditor, 100);
-              return;
-            }
-            
-            const hasBetter = !!(window.QuillBetterTable && (window.QuillBetterTable.default || window.QuillBetterTable));
-            if(hasBetter){
-              try {
-                const Better = window.QuillBetterTable.default || window.QuillBetterTable;
-                Quill.register('modules/better-table', Better);
-              } catch(e){ console.warn('BetterTable register failed:', e); }
-            }
-            
-            const modules = {
-              toolbar: [
-                [{ 'header': [1, 2, 3, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'align': [] }],
-                ['link'],
-                ['clean']
-              ]
-            };
-            if(hasBetter){
-              modules.toolbar.push([{ 'table': 'TD' }]);
-              modules['better-table'] = {
-                operationMenu: { items: { unmergeCells: { text: 'Séparer les cellules' } } }
-              };
-              modules.keyboard = { bindings: (window.QuillBetterTable && window.QuillBetterTable.keyboardBindings) || {} };
-            }
-            
-            self.quillEditor = new Quill('#quill-editor', {
-              theme: 'snow',
-              modules,
-              placeholder: 'Le compte rendu généré apparaîtra ici...'
-            });
-            
-            // Empêcher la perte de sélection lors des clics sur la toolbar (UX)
-            try {
-              const toolbarRoot = document.querySelector('#quill-holder .ql-toolbar');
-              if (toolbarRoot) {
-                const keepFocus = (e) => { e.preventDefault(); };
-                toolbarRoot.addEventListener('mousedown', keepFocus, true);
-                toolbarRoot.addEventListener('pointerdown', keepFocus, true);
-              }
-            } catch(e){ /* noop */ }
-
-            if(hasBetter){
-              try {
-                const toolbar = self.quillEditor.getModule('toolbar');
-                toolbar.addHandler('table', () => {
-                  const tableModule = self.quillEditor.getModule('better-table');
-                  if(tableModule && tableModule.insertTable){ tableModule.insertTable(3, 3); }
-                });
-              } catch(e){ /* noop */ }
-            }
-            
-            // Injecter le HTML existant si présent (import HTML -> Delta)
-            if(self.currentProject && self.currentProject.report && self.currentProject.report.generated){
-              try {
-                self.quillEditor.clipboard.dangerouslyPasteHTML(self.currentProject.report.generated);
-              } catch(e){
-                self.quillEditor.root.innerHTML = self.currentProject.report.generated;
-              }
-            }
-            
-            // Sauvegarde automatique (debounced pour éviter des freezes)
-            self.quillEditor.on('text-change', () => {
-              self.currentProject.report.generated = self.quillEditor.root.innerHTML;
-              self.debouncedSave();
-            });
-          };
-          
-          initEditor();
-        },
-        
-        // Copier le texte du rapport
-        copyReportText(){
-          if(this.quillEditor){
-            const text = this.quillEditor.getText();
-            navigator.clipboard.writeText(text);
-            this.showToast('Copié!', 'success');
-          }
-        },
-        
-        // Effacer le rapport
-        clearReport(){
-          if(confirm('Êtes-vous sûr de vouloir effacer le compte rendu ?')){
-            this.currentProject.report.generated = '';
-            if(this.quillEditor){
-              this.quillEditor.setContents([]);
-            }
-            this.saveProject();
-            this.showToast('Compte rendu effacé', 'success');
-          }
-        },
-        
         // Convertir markdown en HTML pour l'éditeur (ancienne fonction, gardée pour compatibilité)
         convertMarkdownToHTML(markdown){
           if(!markdown) return '';
@@ -2370,6 +2479,16 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           }
           
           this.isGeneratingReport = true;
+          
+          // Forcer l'effacement du contenu et attendre le prochain tick pour éviter les problèmes d'affichage
+          this.currentProject.report.generated = '';
+          const editor = document.getElementById('report-editor');
+          if(editor){
+            editor.innerHTML = '';
+          }
+          
+          // Attendre un tick pour s'assurer que le DOM est bien vidé
+          await new Promise(resolve => setTimeout(resolve, 50));
           try {
             const response = await fetch('/api/generate-report', {
               method: 'POST',
@@ -2405,13 +2524,15 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             // Convertir le markdown en HTML avec marked.js
             const htmlContent = (typeof _mk.parse === 'function') ? _mk.parse(data.report) : _mk(data.report);
             this.currentProject.report.generated = htmlContent;
-            // Mettre à jour l'éditeur Quill si déjà initialisé
-            if(this.quillEditor){
-              try {
-                this.quillEditor.clipboard.dangerouslyPasteHTML(htmlContent);
-              } catch(e){
-                this.quillEditor.root.innerHTML = htmlContent;
-              }
+            
+            // Forcer la mise à jour de l'éditeur HTML
+            const editor = document.getElementById('report-editor');
+            if(editor){
+              editor.innerHTML = htmlContent;
+              // Réinitialiser l'historique avec le nouveau contenu
+              this.editorHistory = [htmlContent];
+              this.editorHistoryIndex = 0;
+              this.editorLastSavedState = htmlContent;
             }
             
             console.log('✅ HTML généré:', htmlContent.substring(0, 500));
@@ -2427,87 +2548,339 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
         
         // Gestion des images
 
-        // ====== Outils d'édition ======
+        // ====== Système d'édition amélioré ======
+        initEditor(el){
+          el.innerHTML = this.currentProject.report.generated;
+          // Initialiser l'historique avec l'état actuel
+          this.editorHistory = [el.innerHTML];
+          this.editorHistoryIndex = 0;
+          this.editorLastSavedState = el.innerHTML;
+        },
+        
+        onEditorInput(e){
+          if(this.isRestoringHistory) return;
+          
+          const el = e.target;
+          
+          // Mettre à jour le projet immédiatement
+          this.currentProject.report.generated = el.innerHTML;
+          
+          // Debounce pour la sauvegarde dans l'historique (éviter 50 états pour 50 caractères)
+          clearTimeout(this.editorInputDebounceTimer);
+          this.editorInputDebounceTimer = setTimeout(() => {
+            this.saveEditorState(el.innerHTML);
+          }, 500); // 500ms - sauvegarde seulement quand l'utilisateur arrête de taper
+          
+          // Sauvegarder le projet (debounced)
+          this.debouncedSave();
+        },
+        
+        saveEditorState(htmlContent){
+          if(this.isRestoringHistory) return;
+          
+          // Ne sauvegarder que si le contenu a réellement changé
+          if(htmlContent === this.editorLastSavedState) return;
+          
+          // Si on est au milieu de l'historique (après un undo), supprimer tout ce qui suit
+          if(this.editorHistoryIndex < this.editorHistory.length - 1){
+            this.editorHistory = this.editorHistory.slice(0, this.editorHistoryIndex + 1);
+          }
+          
+          // Ajouter le nouvel état
+          this.editorHistory.push(htmlContent);
+          this.editorHistoryIndex++;
+          
+          // Limiter l'historique à 50 états pour éviter la fuite mémoire
+          if(this.editorHistory.length > 50){
+            this.editorHistory.shift();
+            this.editorHistoryIndex--;
+          }
+          
+          this.editorLastSavedState = htmlContent;
+        },
+        
         focusEditor(){
           const el = document.getElementById('report-editor');
           if(el){ el.focus(); }
         },
+        
+        execEditorCommand(cmd, value = null){
+          const el = document.getElementById('report-editor');
+          if(!el) return;
+          
+          el.focus();
+          
+          // Vérifier qu'il y a une sélection pour le formatage de texte
+          const selection = window.getSelection();
+          if(!selection.rangeCount) return;
+          
+          try {
+            document.execCommand(cmd, false, value);
+            // Forcer la sauvegarde immédiate dans l'historique (action explicite)
+            this.saveEditorState(el.innerHTML);
+          } catch(e){
+            console.error('Erreur execCommand:', e);
+          }
+        },
+        
         format(cmd){
-          const el = document.getElementById('report-editor');
-          if(el){ 
-            el.focus();
-            // Petit délai pour s'assurer que le focus est bien établi
-            setTimeout(() => {
-              document.execCommand(cmd, false, null);
-              this.currentProject.report.generated = el.innerHTML;
-              this.saveProject();
-            }, 10);
-          }
+          this.execEditorCommand(cmd);
         },
+        
         setHeading(level){
-          const el = document.getElementById('report-editor');
-          if(el){ 
-            el.focus();
-            setTimeout(() => {
-              document.execCommand('formatBlock', false, 'H'+level);
-              this.currentProject.report.generated = el.innerHTML;
-              this.saveProject();
-            }, 10);
-          }
+          this.execEditorCommand('formatBlock', 'H' + level);
         },
+        
         clearFormatting(){
           const el = document.getElementById('report-editor');
-          if(el){ 
-            el.focus();
-            setTimeout(() => {
-              document.execCommand('removeFormat', false, null);
-              this.currentProject.report.generated = el.innerHTML;
-              this.saveProject();
-            }, 10);
+          if(!el) return;
+          
+          el.focus();
+          
+          const selection = window.getSelection();
+          if(!selection.rangeCount){
+            this.showToast('Sélectionnez du texte à déformater', 'error');
+            return;
+          }
+          
+          try {
+            // Sauvegarder le range et le texte sélectionné
+            const range = selection.getRangeAt(0);
+            
+            // Extraire le texte pur de la sélection (sans formatage)
+            const selectedText = range.toString();
+            
+            if(!selectedText){
+              this.showToast('Sélectionnez du texte à déformater', 'error');
+              return;
+            }
+            
+            // Supprimer le contenu sélectionné
+            range.deleteContents();
+            
+            // Créer un nœud texte pur (sans aucun formatage)
+            const textNode = document.createTextNode(selectedText);
+            
+            // Insérer le texte pur
+            range.insertNode(textNode);
+            
+            // Replacer le curseur à la fin du texte inséré
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Forcer la sauvegarde immédiate dans l'historique (action explicite)
+            this.saveEditorState(el.innerHTML);
+            
+            this.showToast('Formatage supprimé', 'success');
+          } catch(e){
+            console.error('Erreur clearFormatting:', e);
+            this.showToast('Erreur lors de la suppression du formatage', 'error');
           }
         },
-        undo(){
+        
+        setTextColor(color){
           const el = document.getElementById('report-editor');
-          if(el){ 
+          if(!el) return;
+          
+          const selection = window.getSelection();
+          if(!selection.rangeCount || !selection.toString()){
+            this.showToast('⚠️ Sélectionnez du texte d\'abord, puis choisissez la couleur', 'error');
+            return;
+          }
+          
+          // Sauvegarder la sélection avant manipulation
+          const range = selection.getRangeAt(0);
+          
+          try {
             el.focus();
-            document.execCommand('undo', false, null);
+            
+            // Restaurer la sélection
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Appliquer la couleur
+            const success = document.execCommand('foreColor', false, color);
+            
+            if(success){
+              // Forcer la sauvegarde immédiate dans l'historique (action explicite)
+              this.saveEditorState(el.innerHTML);
+              // Toast discret sans message (l'utilisateur voit le résultat)
+            } else {
+              this.showToast('Erreur lors du changement de couleur', 'error');
+            }
+          } catch(e){
+            console.error('Erreur setTextColor:', e);
+            this.showToast('Erreur lors du changement de couleur', 'error');
           }
         },
-        redo(){
+        
+        setHighlightColor(color){
           const el = document.getElementById('report-editor');
-          if(el){ 
+          if(!el) return;
+          
+          const selection = window.getSelection();
+          if(!selection.rangeCount || !selection.toString()){
+            this.showToast('⚠️ Sélectionnez du texte d\'abord, puis choisissez le surlignage', 'error');
+            return;
+          }
+          
+          // Sauvegarder la sélection avant manipulation
+          const range = selection.getRangeAt(0);
+          
+          try {
             el.focus();
-            document.execCommand('redo', false, null);
+            
+            // Restaurer la sélection
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Appliquer le surlignage (essayer hiliteColor puis backColor)
+            let success = document.execCommand('hiliteColor', false, color);
+            if(!success){
+              success = document.execCommand('backColor', false, color);
+            }
+            
+            if(success){
+              // Forcer la sauvegarde immédiate dans l'historique (action explicite)
+              this.saveEditorState(el.innerHTML);
+              // Toast discret sans message (l'utilisateur voit le résultat)
+            } else {
+              this.showToast('Erreur lors du surlignage', 'error');
+            }
+          } catch(e){
+            console.error('Erreur setHighlightColor:', e);
+            this.showToast('Erreur lors du surlignage', 'error');
           }
         },
+        
+        insertList(type){
+          const cmd = type === 'ul' ? 'insertUnorderedList' : 'insertOrderedList';
+          this.execEditorCommand(cmd);
+        },
+        
+        insertLink(){
+          const selection = window.getSelection();
+          if(!selection.toString()){
+            this.showToast('Sélectionnez du texte pour créer un lien', 'error');
+            return;
+          }
+          
+          const url = prompt('URL du lien:', 'https://');
+          if(url && url.trim()){
+            this.execEditorCommand('createLink', url.trim());
+          }
+        },
+        
         insertTable(){
           this.focusEditor();
-          const html = `
-            <table>
-              <thead>
-                <tr>
-                  <th>Action</th>
-                  <th>Responsable</th>
-                  <th>Échéance</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>—</td><td>—</td><td>—</td><td>—</td>
-                </tr>
-              </tbody>
-            </table>`;
-          document.execCommand('insertHTML', false, html);
-          this.saveProject();
+          const html = `<table>
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Responsable</th>
+                <th>Échéance</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>—</td><td>—</td><td>—</td><td>—</td>
+              </tr>
+            </tbody>
+          </table><p><br></p>`;
+          this.execEditorCommand('insertHTML', html);
         },
+        
+        editorUndo(){
+          if(this.editorHistoryIndex <= 0) return;
+          
+          this.isRestoringHistory = true;
+          this.editorHistoryIndex--;
+          
+          const el = document.getElementById('report-editor');
+          if(el){
+            el.innerHTML = this.editorHistory[this.editorHistoryIndex];
+            this.currentProject.report.generated = el.innerHTML;
+            this.editorLastSavedState = el.innerHTML;
+            this.saveProject();
+          }
+          
+          setTimeout(() => { this.isRestoringHistory = false; }, 50);
+        },
+        
+        editorRedo(){
+          if(this.editorHistoryIndex >= this.editorHistory.length - 1) return;
+          
+          this.isRestoringHistory = true;
+          this.editorHistoryIndex++;
+          
+          const el = document.getElementById('report-editor');
+          if(el){
+            el.innerHTML = this.editorHistory[this.editorHistoryIndex];
+            this.currentProject.report.generated = el.innerHTML;
+            this.editorLastSavedState = el.innerHTML;
+            this.saveProject();
+          }
+          
+          setTimeout(() => { this.isRestoringHistory = false; }, 50);
+        },
+        
+        updateToolbarState(){
+          // Pour une future implémentation: mettre à jour l'état visuel des boutons
+          // (gras actif, italique actif, etc.)
+        },
+        
+        getWordCount(){
+          const el = document.getElementById('report-editor');
+          if(!el) return 0;
+          const text = el.innerText || '';
+          const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+          return words.length;
+        },
+        
         onEditorKeydown(e){
+          // Ctrl+Z = Undo
           if((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z'){
             e.preventDefault();
-            this.undo();
-          } else if((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))){
+            this.editorUndo();
+            return;
+          }
+          
+          // Ctrl+Y ou Ctrl+Shift+Z = Redo
+          if((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))){
             e.preventDefault();
-            this.redo();
+            this.editorRedo();
+            return;
+          }
+          
+          // Ctrl+B = Bold
+          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b'){
+            e.preventDefault();
+            this.format('bold');
+            return;
+          }
+          
+          // Ctrl+I = Italic
+          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'i'){
+            e.preventDefault();
+            this.format('italic');
+            return;
+          }
+          
+          // Ctrl+U = Underline
+          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u'){
+            e.preventDefault();
+            this.format('underline');
+            return;
+          }
+          
+          // Ctrl+K = Insert link
+          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+            e.preventDefault();
+            this.insertLink();
+            return;
           }
         },
         async addImage(event){
@@ -2600,6 +2973,7 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             a.remove();
             URL.revokeObjectURL(url);
             
+            this.addExportToHistory('PDF');
             this.showToast('PDF téléchargé', 'success');
           } catch(e){
             this.showToast(e.message, 'error');
@@ -2638,11 +3012,43 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             a.remove();
             URL.revokeObjectURL(url);
             
+            this.addExportToHistory('DOCX');
             this.showToast('Document Word téléchargé', 'success');
           } catch(e){
             this.showToast(e.message, 'error');
           } finally {
             this.isGeneratingDOCX = false;
+          }
+        },
+        
+        // Ajouter un export à l'historique (crée une nouvelle entrée avec nouvel ID)
+        addExportToHistory(format){
+          try {
+            // Créer une copie du projet actuel avec un nouvel ID pour l'historique
+            const exportEntry = JSON.parse(JSON.stringify(this.currentProject));
+            exportEntry.id = Date.now();
+            exportEntry.createdAt = new Date().toISOString();
+            exportEntry.updatedAt = exportEntry.createdAt;
+            
+            // Mettre à jour le nom avec le format d'export
+            const docName = this.currentProject.pdfConfig.title || 'Document';
+            const date = new Date();
+            const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            exportEntry.name = `${docName} (${format}) - ${dateStr} ${timeStr}`;
+            
+            // Ajouter en début de liste
+            this.projects.unshift(exportEntry);
+            
+            // Limiter à 20 projets
+            if(this.projects.length > 20){
+              this.projects = this.projects.slice(0, 20);
+            }
+            
+            localStorage.setItem('smartreport_projects', JSON.stringify(this.projects));
+            console.log(`📋 Export ${format} ajouté à l'historique: ${exportEntry.name}`);
+          } catch(e){
+            console.error('Erreur ajout export à l\'historique:', e);
           }
         },
         
@@ -2655,9 +3061,16 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             }
             this.currentProject.updatedAt = new Date().toISOString();
             
-            // Synchroniser le nom du projet avec le titre PDF
+            // Générer automatiquement un nom si le titre est vide ou par défaut
             if(this.currentProject.pdfConfig.title && this.currentProject.pdfConfig.title !== 'Document'){
               this.currentProject.name = this.currentProject.pdfConfig.title;
+            } else {
+              // Générer un nom automatique basé sur le template et la date
+              const templateName = this.reportTemplates.find(t => t.id === this.currentProject.report.template)?.name || 'Compte rendu';
+              const date = new Date(this.currentProject.updatedAt);
+              const dateStr = date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+              this.currentProject.name = `${templateName} - ${dateStr} ${timeStr}`;
             }
             
             const idx = this.projects.findIndex(p => p.id === this.currentProject.id);
@@ -2729,6 +3142,40 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           };
           this.mermaidCode = '';
           this.renderMermaid();
+        },
+        
+        // Fonction pour remonter en haut de la page
+        scrollToTop(){
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        },
+        
+        // Fonction pour réinitialiser toute la page
+        resetAll(){
+          if(confirm('⚠️ Voulez-vous vraiment réinitialiser TOUTE la page ?\n\nCela va effacer :\n- Le compte rendu en cours\n- Les notes brutes\n- Le diagramme Mermaid\n- Les images\n- Toutes les données du projet actuel\n\nCette action est irréversible.')){
+            // Réinitialiser le projet actuel
+            this.newProject();
+            
+            // Vider l'éditeur HTML
+            const editor = document.getElementById('report-editor');
+            if(editor){
+              editor.innerHTML = '';
+            }
+            
+            // Vider le prompt
+            this.prompt = '';
+            
+            // Réinitialiser le code Mermaid
+            this.mermaidCode = '';
+            this.renderMermaid();
+            
+            // Remonter en haut de la page
+            this.scrollToTop();
+            
+            this.showToast('✅ Page réinitialisée', 'success');
+          }
         }
       }
     }
