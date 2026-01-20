@@ -20,14 +20,14 @@ SmartReport transforme vos notes en rapports PDF/DOCX prêts à envoyer :
 
 ### Windows (automatique)
 ```bash
-git clone https://github.com/enovacom/SmartReport.git
+git clone https://github.com/svoer/SmartReport.git
 cd SmartReport
 start.bat
 ```
 
 ### Linux/macOS
 ```bash
-git clone https://github.com/enovacom/SmartReport.git
+git clone https://github.com/svoer/SmartReport.git
 cd SmartReport
 python3 -m venv venv
 source venv/bin/activate

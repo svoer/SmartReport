@@ -55,12 +55,12 @@
 
 **Option A : Via Git**
 ```powershell
-git clone https://github.com/enovacom/SmartReport.git
+git clone https://github.com/svoer/SmartReport.git
 cd SmartReport
 ```
 
 **Option B : Sans Git (téléchargement ZIP)**
-1. Télécharger : https://github.com/enovacom/SmartReport/archive/main.zip
+1. Télécharger : https://github.com/svoer/SmartReport/archive/main.zip
 2. Extraire dans `C:\Users\<votre_user>\Desktop\SmartReport`
 3. Ouvrir PowerShell dans ce dossier
 
@@ -147,7 +147,7 @@ pip --version
 #### 3. Télécharger SmartReport
 
 ```powershell
-git clone https://github.com/enovacom/SmartReport.git
+git clone https://github.com/svoer/SmartReport.git
 cd SmartReport
 ```
 
@@ -233,7 +233,7 @@ sudo apt install python3 python3-pip python3-venv git -y
 #### 2. Cloner le Dépôt
 
 ```bash
-git clone https://github.com/enovacom/SmartReport.git
+git clone https://github.com/svoer/SmartReport.git
 cd SmartReport
 ```
 
@@ -345,7 +345,7 @@ brew install python@3.11
 ### 3. Cloner le Dépôt
 
 ```bash
-git clone https://github.com/enovacom/SmartReport.git
+git clone https://github.com/svoer/SmartReport.git
 cd SmartReport
 ```
 

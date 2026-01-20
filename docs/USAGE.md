@@ -216,7 +216,7 @@ Prochaine réunion: 05/02/2026 - Présentation POC + validation CDC
 
 ### Étape 2 : Choisir le Template
 
-**21 templates disponibles** organisés en **7 catégories métier** :
+**40 templates disponibles** organisés par catégories métier :
 
 ---
 

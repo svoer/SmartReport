@@ -227,10 +227,10 @@ sequenceDiagram
 ```
 SmartReport/
 │
-├── 📄 app.py (2569 lignes)          # Backend Flask principal
+├── 📄 app.py (5649 lignes)          # Backend Flask principal
 │   ├── Configuration (providers IA, .env)
 │   ├── Routes API REST (8 endpoints)
-│   ├── Prompts système (5 templates)
+│   ├── Prompts système (40 templates de comptes rendus)
 │   ├── Fonctions de génération IA
 │   ├── Moteur PDF (ReportLab)
 │   └── Moteur DOCX (python-docx)
@@ -278,15 +278,19 @@ SmartReport/
 | `/api/ai/settings` | POST | Sauvegarde config provider |
 | `/api/ai/test` | POST | Test connexion provider |
 
-#### Prompts Système (5 Templates)
+#### Prompts Système (40 Templates)
 
-Chaque template dispose d'un prompt système optimisé :
+L'application propose **40 templates de comptes rendus** organisés par catégories métier :
 
-1. **`client_formel`** : Compte rendu de réunion client professionnel
-2. **`sprint_agile`** : Synthèse de sprint (daily, review, retrospective)
-3. **`brief_technique`** : Atelier technique (architecture, choix techno)
-4. **`crm_echange`** : CR commercial avec opportunités détectées
-5. **`correction_orthographe`** : Correction grammaticale sans modification de contenu
+- **Général** (7) : Réunions clients, sprints agiles, ateliers techniques, emails, avancement projet, notes de service, ordres du jour
+- **Commercial** (3) : Visites commerciales CRM, réponses appels d'offres, démonstrations produit
+- **Projets & Déploiement** (7) : Cadrage, recettes, migrations, formations, release notes, clôture
+- **Support & Maintenance** (5) : Interventions rapides, incidents critiques, TMA, exploitation, risques
+- **HPP Technique** (13) : Audits, interventions, installations, fiches écart, BIP, COPIL, PMP, RLI/RLC, RPO, tests, TDB SPOT, clôture, classification
+- **Technique Santé** (4) : Flux HL7/FHIR, conformité réglementaire, DAT, procédures exploitation
+- **Utilitaires** (1) : Correction orthographique
+
+Chaque template dispose d'un prompt système optimisé avec structure obligatoire et règles métier spécifiques.
 
 ### 2. Frontend Alpine.js (`templates/index.html`)
 
