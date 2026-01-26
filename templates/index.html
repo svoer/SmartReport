@@ -1294,6 +1294,11 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           { id: 'hpp_delivery_classification', name: 'HPP - Classification Livrables', category: 'hpp' },
           
           // === CATÉGORIE : TECHNIQUE SANTÉ ===
+          { id: 'cr_simplifie_cloture', name: 'CR Simplifié Clôture Projet', category: 'technique_sante' },
+          { id: 'pv_recette_finale', name: 'PV de Recette Finale', category: 'technique_sante' },
+          { id: 'specifications_techniques', name: 'Spécifications Techniques Flux', category: 'technique_sante' },
+          { id: 'guide_integration', name: 'Guide d\'Intégration', category: 'technique_sante' },
+          { id: 'cr_mise_en_production', name: 'Compte-Rendu de Mise En Production', category: 'technique_sante' },
           { id: 'analyse_flux_hl7', name: 'Analyse Flux HL7/FHIR', category: 'technique_sante' },
           { id: 'conformite_reglementaire', name: 'Conformité Réglementaire', category: 'technique_sante' },
           { id: 'dat', name: 'Dossier d\'Architecture Technique (DAT)', category: 'technique_sante' },
@@ -1304,13 +1309,13 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
         ],
         
         templateCategories: {
-          general: { name: '📋 Général', order: 1 },
-          commercial: { name: '🤝 Commercial', order: 2 },
-          projets: { name: '🚀 Projets & Déploiement', order: 3 },
-          support: { name: '🛠️ Support & Maintenance', order: 4 },
-          hpp: { name: '⚙️ HPP Technique', order: 5 },
-          technique_sante: { name: '🏥 Technique Santé', order: 6 },
-          utilitaire: { name: '🔧 Utilitaires', order: 7 }
+          general: { name: 'Général', order: 1 },
+          commercial: { name: 'Commercial', order: 2 },
+          projets: { name: 'Projets & Déploiement', order: 3 },
+          support: { name: 'Support & Maintenance', order: 4 },
+          hpp: { name: 'HPP Technique', order: 5 },
+          technique_sante: { name: 'Technique Santé', order: 6 },
+          utilitaire: { name: 'Utilitaires', order: 7 }
         },
         defaultLogoUrl: '{{ url_for("static", filename="enovacom_logo_square.png") }}',
 
@@ -1495,7 +1500,6 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             
             if(isFirstLaunch) {
               // PREMIER LANCEMENT : Forcer Enovacom + Poppins
-              console.log('🎉 Premier lancement - Application des paramètres par défaut : Enovacom + Poppins');
               this.theme = 'enovacom';
               this.fontFamily = 'Poppins, sans-serif';
               this.fontSize = 16;
@@ -1539,7 +1543,6 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
                 // Sauvegarder si migration effectuée
                 if(migrated){
                   localStorage.setItem('smartreport_projects', JSON.stringify(this.projects));
-                  console.log('✅ Templates migrés vers nouveaux IDs HPP');
                 }
               } catch(e) {
                 console.error('Erreur chargement projets:', e);
@@ -1600,7 +1603,6 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
               const d=await r.json(); 
               this.models=d.models||[]; 
               this.selectedModel=this.models[0]||''; 
-              console.log(`✅ ${d.models?.length || 0} modèles ${d.provider} chargés`);
             } else {
               console.warn('Impossible de charger les modèles');
             }
@@ -1714,10 +1716,8 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           this.fillColor = th.boxBg;
           this.textColor = th.boxText;
           
-          console.log('Thème appliqué:', th.name, {
-            borderColor: this.borderColor,
-            fillColor: this.fillColor,
-            textColor: this.textColor
+          // Thème appliqué
+          void({ borderColor: this.borderColor, fillColor: this.fillColor, textColor: this.textColor
           });
 
           // Recolor UI seulement pour Enovacom (branding)
@@ -1891,6 +1891,11 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
               startOnLoad:false,
               securityLevel:'loose',
               theme: 'base',
+              flowchart: {
+                htmlLabels: false,
+                useMaxWidth: false,
+                diagramPadding: 20
+              },
               themeVariables:{
                 fontFamily: cssFamily,
                 fontSize: this.fontSize + 'px',
@@ -1960,6 +1965,16 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
                 el.style.fontFamily = this.fontFamily;
                 el.style.fontSize = this.fontSize + 'px';
               });
+              
+              // CORRECTION: Recalculer le viewBox pour englober tout le contenu (labels inclus)
+              try {
+                const bbox = svgEl.getBBox();
+                const padding = 20;
+                const newViewBox = `${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}`;
+                svgEl.setAttribute('viewBox', newViewBox);
+                svgEl.setAttribute('width', bbox.width + padding * 2);
+                svgEl.setAttribute('height', bbox.height + padding * 2);
+              } catch(e) { console.warn('getBBox error:', e); }
             }
             this.lastError='';
           }catch(err){
@@ -2328,20 +2343,26 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             }
           }catch(e){ console.warn('Font loading timeout:', e); }
 
-          // Utiliser html2canvas ou une approche différente pour éviter CORS
-          // On va dessiner directement le SVG sans passer par une image intermédiaire
-          
-          let w, h;
-          const vb = svg.getAttribute('viewBox');
-          if(vb){ 
-            const p = vb.trim().split(/\s+/).map(Number); 
-            w = p[2]; h = p[3]; 
-          } else { 
-            const bbox = svg.getBBox(); 
-            w = bbox.width; h = bbox.height; 
+          // CORRECTION: Toujours recalculer le bounding box réel pour inclure tous les éléments (labels compris)
+          const padding = 25;
+          let bbox;
+          try {
+            bbox = svg.getBBox();
+          } catch(e) {
+            // Fallback sur viewBox si getBBox échoue
+            const vb = svg.getAttribute('viewBox');
+            if(vb){ 
+              const p = vb.trim().split(/\s+/).map(Number); 
+              bbox = { x: p[0], y: p[1], width: p[2], height: p[3] };
+            } else {
+              bbox = { x: 0, y: 0, width: 800, height: 600 };
+            }
           }
-          w = Math.max(1, Math.floor(w));
-          h = Math.max(1, Math.floor(h));
+          
+          const x = bbox.x - padding;
+          const y = bbox.y - padding;
+          const w = Math.max(1, Math.ceil(bbox.width + padding * 2));
+          const h = Math.max(1, Math.ceil(bbox.height + padding * 2));
 
           const canvas = document.createElement('canvas');
           canvas.width = Math.round(w * scale);
@@ -2354,9 +2375,10 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             ctx.fillRect(0, 0, canvas.width, canvas.height);
           }
 
-          // Cloner et préparer le SVG
+          // Cloner et préparer le SVG avec le viewBox recalculé
           const clone = svg.cloneNode(true);
           if(!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+          clone.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
           clone.setAttribute('width', w);
           clone.setAttribute('height', h);
           
@@ -2580,7 +2602,6 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
               this.editorLastSavedState = htmlContent;
             }
             
-            console.log('✅ HTML généré:', htmlContent.substring(0, 500));
             
             this.saveProject();
             this.showToast('Compte rendu généré', 'success');
@@ -2995,7 +3016,6 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
           this.isGeneratingPDF = true;
           try {
             // DIAGRAMME SUPPRIMÉ - L'utilisateur peut l'exporter manuellement et l'ajouter via Images
-            console.log('📊 Diagramme ignoré - Utilisez la section Images pour ajouter le diagramme');
             
             const response = await fetch('/api/generate-pdf', {
               method: 'POST',
@@ -3091,7 +3111,6 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
             }
             
             localStorage.setItem('smartreport_projects', JSON.stringify(this.projects));
-            console.log(`📋 Export ${format} ajouté à l'historique: ${exportEntry.name}`);
           } catch(e){
             console.error('Erreur ajout export à l\'historique:', e);
           }
@@ -3146,7 +3165,20 @@ GAMME->>DPI: ADT^A01 (Création dossier patient)
               this.renderMermaid();
             }
             
-            // Le contenu du rapport sera chargé automatiquement par x-html
+            // Forcer la mise à jour de l'éditeur avec le contenu sauvegardé
+            const editor = document.getElementById('report-editor');
+            if(editor && this.currentProject.report.generated){
+              editor.innerHTML = this.currentProject.report.generated;
+              // Réinitialiser l'historique d'édition
+              this.editorHistory = [this.currentProject.report.generated];
+              this.editorHistoryIndex = 0;
+              this.editorLastSavedState = this.currentProject.report.generated;
+            } else if(editor){
+              editor.innerHTML = '';
+              this.editorHistory = [''];
+              this.editorHistoryIndex = 0;
+              this.editorLastSavedState = '';
+            }
             
             this.showToast('Projet chargé', 'success');
           }
